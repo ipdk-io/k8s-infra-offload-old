@@ -41,6 +41,7 @@ type Service struct {
 	ClusterPort     uint32
 	GroupID         uint32
 	ServiceEndPoint map[string]ServiceEndPoint
+	NumEndPoints    uint32
 }
 
 type ServiceEndPoint struct {

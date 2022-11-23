@@ -16,7 +16,6 @@ package store
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"reflect"
@@ -107,9 +106,23 @@ func (s Service) GetFromStore() store {
 	}
 }
 
-func (s Service) UpdateToStore() bool {
-	fmt.Println("not implemented")
-	return true
+func (s Service) UpdateToStore() (ret bool) {
+	ret = true
+
+	storeEntry := s.GetFromStore()
+	if storeEntry == nil {
+		return
+	}
+
+	sEntry := storeEntry.(Service)
+
+	for ipAddr, serviceEp := range s.ServiceEndPoint {
+		if _, exists := sEntry.ServiceEndPoint[ipAddr]; !exists {
+			sEntry.ServiceEndPoint[ipAddr] = serviceEp
+		}
+	}
+	sEntry.WriteToStore()
+	return
 }
 
 func RunSyncServiceInfo() bool {
