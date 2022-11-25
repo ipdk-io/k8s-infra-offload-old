@@ -339,6 +339,8 @@ func (s *ApiServer) CreateNetwork(ctx context.Context, in *proto.CreateNetworkRe
 	if err != nil {
 		logger.Errorf("Failed to get port id for %s, err: %v",
 			in.HostIfName, err)
+		out.Successful = false
+		return out, err
 	}
 
 	logger.Infof("Interface: %s, port id: %d", in.HostIfName, portID)
