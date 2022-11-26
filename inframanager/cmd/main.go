@@ -77,6 +77,7 @@ func main() {
 		if pipelineConfig.P4Info == nil {
 			log.Errorf("p4info is null")
 			api.CloseP4RtCCon()
+			api.CloseGNMIConn()
 			os.Exit(1)
 		}
 		store.InitEndPointStore(false)
@@ -89,6 +90,7 @@ func main() {
 			0); err != nil {
 			log.Errorf("Error when setting forwarding pipe: %v", err)
 			api.CloseP4RtCCon()
+			api.CloseGNMIConn()
 			os.Exit(1)
 		}
 		store.InitEndPointStore(true)
