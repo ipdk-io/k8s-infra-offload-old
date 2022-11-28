@@ -165,31 +165,35 @@ func getPortID(ifName string) (portID uint32, err error) {
 		return
 	}
 
-	path := pb.Path{}
-	path.Elem = append(path.Elem, &pb.PathElem{
-		Name: "interfaces",
-	})
-	path.Elem = append(path.Elem, &pb.PathElem{
-		Name: "virtual-interface",
-		Key: map[string]string{
-			"name": ifName,
+	req := &pb.GetRequest{
+		Path: []*pb.Path{
+			&pb.Path{
+				Elem: []*pb.PathElem{
+					&pb.PathElem{
+						Name: "interfaces",
+					},
+					&pb.PathElem{
+						Name: "virtual-interface",
+						Key: map[string]string{
+							"name": ifName,
+						},
+					},
+					&pb.PathElem{
+						Name: "config",
+					},
+					&pb.PathElem{
+						Name: "tdi-portin-id",
+					},
+				},
+			},
 		},
-	})
-	path.Elem = append(path.Elem, &pb.PathElem{
-		Name: "config",
-	})
-	path.Elem = append(path.Elem, &pb.PathElem{
-		Name: "tdi-portin-id",
-	})
-
-	req := pb.GetRequest{}
-	req.Path = append(req.Path, &path)
-	req.Type = pb.GetRequest_ALL
-	req.Encoding = pb.Encoding_PROTO
+		Type:     pb.GetRequest_ALL,
+		Encoding: pb.Encoding_PROTO,
+	}
 
 	server := NewApiServer()
 	if resp, err = server.gNMIClient.Get(context.Background(),
-		&req); err != nil {
+		req); err != nil {
 		return
 	}
 
