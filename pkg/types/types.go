@@ -47,7 +47,9 @@ const (
 	InfraAgentLogDir            = "/var/log/infraagent"
 	InfraAgentCLIName           = "infraagent"
 	HostInterfaceRefId          = "hostInterface"
-	DefaultRoute                = "169.254.1.1/32"
+	BackendInterfaceRefId       = "backendInterface"
+	HostInterfaceAddr           = "200.1.1.2/32"
+	PodDefaultGWAddr            = "200.1.1.1/32"
 	ArpProxyDefaultPort         = 0
 )
 

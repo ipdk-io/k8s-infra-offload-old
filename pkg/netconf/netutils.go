@@ -58,6 +58,7 @@ var (
 	routeListFiltered               = netlink.RouteListFiltered
 	saveInterfaceConf               = utils.SaveInterfaceConf
 	sendSetupHostInterfaceFunc      = sendSetupHostInterface
+	sendSetupBackendtInterfaceFunc  = sendSetupBackendtInterface
 	withNetNSPath                   = ns.WithNetNSPath
 	utilsGetDataDirPath             = utils.GetDataDirPath
 )
@@ -172,8 +173,10 @@ func setupHostRoute(addr *net.IPNet, link netlink.Link) error {
 	if !routeFound {
 		// route does not exist add it
 		if err := routeAdd(&podRoute); err != nil {
+			log.Errorf("Unable to add route: %v error: %v", podRoute, err)
 			return err
 		}
+		log.Infof("Route added: %v", podRoute)
 	}
 
 	return nil
@@ -204,6 +207,9 @@ func configureRouting(link netlink.Link, log *logrus.Entry) error {
 	if err := configureRoutingForCIDR(link, types.NodePodsCIDR, log); err != nil {
 		return fmt.Errorf("Failed to setup routing to Pods CIDR: %w", err)
 	}
+	if err := configureRoutingForCIDR(link, types.ClusterServicesSubnet, log); err != nil {
+		return fmt.Errorf("Failed to setup routing to Service CIDR: %w", err)
+	}
 	return nil
 }
 
@@ -227,6 +233,24 @@ func sendSetupHostInterface(request *pb.SetupHostInterfaceRequest) error {
 	}
 	if !r.Successful {
 		return fmt.Errorf("failed to SetupHostInterface error %s", r.ErrorMessage)
+	}
+	return nil
+}
+
+func sendSetupBackendtInterface(request *pb.CreateNetworkRequest) error {
+	managerAddr := fmt.Sprintf("%s:%s", types.InfraManagerAddr, types.InfraManagerPort)
+	conn, err := grpcDial(managerAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	c := newInfraAgentClient(conn)
+	r, err := c.CreateNetwork(context.TODO(), request)
+	if err != nil {
+		return err
+	}
+	if !r.Successful {
+		return fmt.Errorf("failed to CreateNetwork error %s", r.ErrorMessage)
 	}
 	return nil
 }

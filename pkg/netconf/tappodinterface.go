@@ -82,40 +82,39 @@ func (pi *tapPodInterface) configurePool() ([]*types.InterfaceInfo, error) {
 }
 
 func (pi *tapPodInterface) setup(intfs []*types.InterfaceInfo) error {
-	var res *pool.Resource
-	// check if we have config in cache
-	hostInterface, err := readInterfaceConf(utilsGetDataDirPath(types.TapInterface), types.HostInterfaceRefId, types.HostInterfaceRefId)
-	if err != nil {
-		// get one interface for host networking and assign first address
-		res, err = pi.pool.Get()
-		if err != nil {
-			pi.log.WithError(err).Error("unable to allocate interface for host")
-			return err
-		}
-	} else {
-		res = &pool.Resource{
-			InterfaceInfo: hostInterface,
-			InUse:         true,
-		}
+	// Setup host interface(this interface used by host to route PodCIDR and Service CIDR to backend)
+	if err := pi.setupHostIntf(intfs); err != nil {
+		return err
 	}
 
-	varConfigurer := utils.NewOsVariableConfigurer()
-	ec := utils.NewEnvConfigurer(varConfigurer, types.DefaultCalicoConfig)
+	// Setup backend interface(this interface used by Pods as default GW)
+	if err := pi.setupBackendIntf(intfs); err != nil {
+		return err
+	}
 
-	ipnet, err := getHostIPfromPodCIDRFunc(pi.log, ec)
+	return nil
+}
+
+func (pi *tapPodInterface) setupHostIntf(intfs []*types.InterfaceInfo) error {
+	res, err := pi.allocateIntf(types.HostInterfaceRefId)
+	if err != nil {
+		return err
+	}
+
+	_, ipnet, err := net.ParseCIDR(types.HostInterfaceAddr)
+
 	if err != nil {
 		pi.log.WithError(err).Error("Failed to get IP for host interface")
 		return err
 	}
-	pi.log.Printf("Host IP address allocated: %s", ipnet)
+	pi.log.Printf("Host IP address: %s", ipnet)
 
 	if err := configureHostInterfaceFunc(res.InterfaceInfo.InterfaceName, ipnet, intfs, pi.log); err != nil {
 		return fmt.Errorf("Failed to configure host interface %s with IP configurations: %w", res.InterfaceInfo.InterfaceName, err)
 	}
-	// set host interface name
+
 	types.NodeInfraHostInterfaceName = res.InterfaceInfo.InterfaceName
 
-	// dial inframanager and setup host interface
 	request := &pb.SetupHostInterfaceRequest{
 		IfName:   types.NodeInfraHostInterfaceName,
 		Ipv4Addr: ipnet.String(),
@@ -124,25 +123,100 @@ func (pi *tapPodInterface) setup(intfs []*types.InterfaceInfo) error {
 	if err := sendSetupHostInterfaceFunc(request); err != nil {
 		return err
 	}
-	// save host interface setting in cache
+
+	// save interface setting in cache
 	if err := saveInterfaceConf(utilsGetDataDirPath(types.TapInterface), types.HostInterfaceRefId, types.HostInterfaceRefId, res.InterfaceInfo); err != nil {
 		return err
 	}
 	return nil
 }
 
+func (pi *tapPodInterface) setupBackendIntf(intfs []*types.InterfaceInfo) error {
+	res, err := pi.allocateIntf(types.BackendInterfaceRefId)
+	if err != nil {
+		return err
+	}
+
+	_, ipnet, err := net.ParseCIDR(types.PodDefaultGWAddr)
+
+	if err != nil {
+		pi.log.WithError(err).Error("Failed to get IP for Backend interface")
+		return err
+	}
+	pi.log.Printf("Backend interface IP address: %s", ipnet)
+
+	_, err = configureIntfWithIP(res.InterfaceInfo.InterfaceName, pi.log, ipnet)
+	if err != nil {
+		return err
+	}
+
+	ipConfig := []*pb.IPConfig{{Address: ipnet.String()}}
+	request := &pb.CreateNetworkRequest{
+		AddRequest: &pb.AddRequest{
+			InterfaceName: res.InterfaceInfo.InterfaceName,
+			ContainerIps:  ipConfig,
+		},
+		HostIfName: res.InterfaceInfo.InterfaceName,
+		MacAddr:    res.InterfaceInfo.MacAddr,
+	}
+	if err := sendSetupBackendtInterfaceFunc(request); err != nil {
+		return err
+	}
+	// save interface setting in cache
+	if err := saveInterfaceConf(utilsGetDataDirPath(types.TapInterface), types.BackendInterfaceRefId, types.BackendInterfaceRefId, res.InterfaceInfo); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (pi *tapPodInterface) allocateIntf(intfRef string) (*pool.Resource, error) {
+	var res *pool.Resource
+
+	interfaceInfo, err := readInterfaceConf(utilsGetDataDirPath(types.TapInterface), intfRef, intfRef)
+	if err != nil {
+
+		res, err = pi.pool.Get()
+		if err != nil {
+			pi.log.WithError(err).Errorf("unable to allocate interface %s", intfRef)
+			return nil, err
+		}
+	} else {
+		res = &pool.Resource{
+			InterfaceInfo: interfaceInfo,
+			InUse:         true,
+		}
+	}
+	return res, nil
+}
+
 func configureHostInterface(ifName string, ipnet *net.IPNet, interfaces []*types.InterfaceInfo, log *logrus.Entry) error {
 
+	// delete any set address on interface
+	link, err := configureIntfWithIP(ifName, log, ipnet)
+	if err != nil {
+		return err
+	}
+
+	// setup routing from pods CIDR via host side tap interface
+	// check if it exist already
+	if err := configureRoutingFunc(link, log); err != nil {
+		log.WithError(err).Error("Failed to configure routing")
+		return err
+	}
+	return nil
+}
+
+func configureIntfWithIP(ifName string, log *logrus.Entry, ipnet *net.IPNet) (netlink.Link, error) {
 	link, err := linkByName(ifName)
 	if err != nil {
 		log.WithError(err).Errorf("error getting netlink object with inteface name: %s", ifName)
-		return err
+		return nil, err
 	}
-	// delete any set address on interface
+
 	ips, err := addrList(link, netlink.FAMILY_V4)
 	if err != nil {
 		log.WithError(err).Error("Failed to list IPs on interface")
-		return err
+		return nil, err
 	}
 	for _, ip := range ips {
 		if err := addrDel(link, &ip); err != nil {
@@ -152,19 +226,13 @@ func configureHostInterface(ifName string, ipnet *net.IPNet, interfaces []*types
 
 	if err := addrAdd(link, &netlink.Addr{IPNet: ipnet}); err != nil {
 		log.WithError(err).Error("Failed to set ip address for interface")
-		return err
+		return nil, err
 	}
 	if err := linkSetUp(link); err != nil {
 		log.WithError(err).Error("Failed to set interface up")
-		return err
+		return nil, err
 	}
-	// setup routing from pods CIDR via host side tap interface
-	// check if it exist already
-	if err := configureRoutingFunc(link, log); err != nil {
-		log.WithError(err).Error("Failed to configure routing")
-		return err
-	}
-	return nil
+	return link, nil
 }
 
 func getHostIPfromPodCIDR(log *logrus.Entry, ec *utils.EnvConfigurer) (*net.IPNet, error) {

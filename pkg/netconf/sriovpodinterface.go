@@ -17,10 +17,10 @@ package netconf
 import (
 	"context"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 
-	"github.com/containernetworking/plugins/pkg/ipam"
 	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/pool"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
@@ -61,19 +61,13 @@ func (pi *sriovPodInterface) setup() error {
 		return err
 	}
 
-	varConfigurer := utils.NewOsVariableConfigurer()
-	ec := utils.NewEnvConfigurer(varConfigurer, types.DefaultCalicoConfig)
+	_, ipnet, err := net.ParseCIDR(types.HostInterfaceAddr)
 
-	// try to release any address allocated for IPU Agent, ignore error just print
-	if err := releaseIPFromIPAM(ec, ipam.ExecDel); err != nil {
-		pi.log.WithError(err).Error("Failed to release allocated address")
-	}
-
-	ipnet, err := getIPFromIPAM(ec, ipam.ExecAdd)
 	if err != nil {
+		pi.log.WithError(err).Error("Failed to get IP for host interface")
 		return err
 	}
-	pi.log.Printf("Got address for host IPU interface %s", ipnet)
+	pi.log.Printf("Host IP address: %s", ipnet)
 
 	if err := addrAdd(link, &netlink.Addr{IPNet: ipnet}); err != nil {
 		pi.log.WithError(err).Error("Failed to set ip address for interface")

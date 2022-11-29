@@ -79,11 +79,11 @@ func configureTapNamespace(in *pb.AddRequest, linkObj netlink.Link) error {
 			return fmt.Errorf("Cannot set link up: %w", err)
 		}
 
-		if err := setupGwRoute(linkObj, types.DefaultRoute); err != nil {
+		if err := setupGwRoute(linkObj, types.PodDefaultGWAddr); err != nil {
 			return fmt.Errorf("Cannot setup routes: %w", err)
 		}
 
-		if err := setupPodRoute(linkObj, in.ContainerRoutes, types.DefaultRoute); err != nil {
+		if err := setupPodRoute(linkObj, in.ContainerRoutes, types.PodDefaultGWAddr); err != nil {
 			return fmt.Errorf("Cannot setup routes: %w", err)
 		}
 

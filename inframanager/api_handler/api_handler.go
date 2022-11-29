@@ -167,7 +167,7 @@ func CreateServer(log *log.Entry) *ApiServer {
 
 func InsertDefaultRule() {
 	server := NewApiServer()
-	p4.ArptToPortTable(context.Background(), server.p4RtC, types.DefaultRoute,
+	p4.ArptToPortTable(context.Background(), server.p4RtC, types.HostInterfaceAddr,
 		types.ArpProxyDefaultPort, true)
 }
 
