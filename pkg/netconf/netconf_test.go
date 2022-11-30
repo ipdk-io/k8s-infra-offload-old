@@ -184,11 +184,31 @@ var _ = Describe("netconf", func() {
 			_, err := NewTapPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).To(HaveOccurred())
 		})
+		var _ = It("return error if failed on send backend interface configure request to manager", func() {
+			getTapInterfaces = fakeGetTapInterfacesSingle
+			getHostIPfromPodCIDRFunc = fakeGetHostIPfromPodCIDR
+			configureHostInterfaceFunc = fakeConfigureHostInterface
+			sendSetupHostInterfaceFunc = fakeSendSetupHostInterface
+			sendSetupBackendtInterfaceFunc = fakeSendSetupBackendtInterfaceErr
+			linkByName = fakeLinkByName
+			addrList = fakeAddrList
+			addrDel = fakeAddrAddDel
+			addrAdd = fakeAddrAddDel
+			linkSetUp = fakeLinkSet
+			_, err := NewTapPodInterface(logrus.NewEntry(logrus.New()))
+			Expect(err).To(HaveOccurred())
+		})
 		var _ = It("return no error", func() {
 			getTapInterfaces = fakeGetTapInterfacesSingle
 			getHostIPfromPodCIDRFunc = fakeGetHostIPfromPodCIDR
 			configureHostInterfaceFunc = fakeConfigureHostInterface
 			sendSetupHostInterfaceFunc = fakeSendSetupHostInterface
+			sendSetupBackendtInterfaceFunc = fakeSendSetupBackendtInterface
+			linkByName = fakeLinkByName
+			addrList = fakeAddrList
+			addrDel = fakeAddrAddDel
+			addrAdd = fakeAddrAddDel
+			linkSetUp = fakeLinkSet
 			_, err := NewTapPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -271,6 +291,7 @@ var _ = Describe("netconf", func() {
 		var _ = It("return no error", func() {
 			types.ClusterPodsCIDR = "10.210.0.0/16"
 			types.NodePodsCIDR = "10.210.0.0/24"
+			types.ClusterServicesSubnet = "10.96.0.0/16"
 			routeListFiltered = fakeRouteListFiltereToBeDeleted
 			routeDel = fakeRouteHandle
 			routeAdd = fakeRouteHandle
@@ -280,15 +301,17 @@ var _ = Describe("netconf", func() {
 		var _ = It("return error if cannot setup ClusterPodsCIDR routing", func() {
 			types.ClusterPodsCIDR = "badCidr"
 			types.NodePodsCIDR = "10.210.0.0/24"
+			types.ClusterServicesSubnet = "10.96.0.0/16"
 			routeListFiltered = fakeRouteListFiltereToBeDeleted
 			routeDel = fakeRouteHandle
 			routeAdd = fakeRouteHandle
 			err := configureRouting(&fakeLink{}, logrus.NewEntry(logrus.New()))
 			Expect(err).To(HaveOccurred())
 		})
-		var _ = It("return error if cannot setup ClusterPodsCIDR routing", func() {
+		var _ = It("return error if cannot setup ClusterServicesSubnet routing", func() {
 			types.ClusterPodsCIDR = "10.210.0.0/16"
-			types.NodePodsCIDR = "badCidr"
+			types.NodePodsCIDR = "10.210.0.0/24"
+			types.ClusterServicesSubnet = "badCidr"
 			routeListFiltered = fakeRouteListFiltereToBeDeleted
 			routeDel = fakeRouteHandle
 			routeAdd = fakeRouteHandle
@@ -528,6 +551,8 @@ var _ = Describe("netconf", func() {
 			getTapInterfaces = fakeGetTapInterfacesMultiple
 			getHostIPfromPodCIDRFunc = fakeGetHostIPfromPodCIDR
 			configureHostInterfaceFunc = fakeConfigureHostInterface
+			linkByName = fakeLinkByName
+			addrList = fakeAddrList
 			pi, err := NewTapPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
 			readInterfaceConf = fakeReadInterfaceConf
@@ -542,6 +567,8 @@ var _ = Describe("netconf", func() {
 			getTapInterfaces = fakeGetTapInterfacesMultiple
 			getHostIPfromPodCIDRFunc = fakeGetHostIPfromPodCIDR
 			configureHostInterfaceFunc = fakeConfigureHostInterface
+			addrList = fakeAddrList
+			linkByName = fakeLinkByName
 			pi, err := NewTapPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
 			readInterfaceConf = fakeReadInterfaceConf
@@ -741,40 +768,6 @@ var _ = Describe("netconf", func() {
 		var _ = It("return error if cannot get link by name", func() {
 			getVFList = fakeGetVFListSingle
 			linkByName = fakeLinkByNameErr
-			_, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
-			Expect(err).To(HaveOccurred())
-		})
-		var _ = It("return error if cannot list addresses", func() {
-			getVFList = fakeGetVFListSingle
-			linkByName = fakeLinkByName
-			addrList = fakeAddrListErr
-			_, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
-			Expect(err).To(HaveOccurred())
-		})
-		var _ = It("return error if cannot delete address", func() {
-			getVFList = fakeGetVFListSingle
-			linkByName = fakeLinkByName
-			addrList = fakeAddrListWithResult
-			addrDel = fakeAddrAddDelErr
-			_, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
-			Expect(err).To(HaveOccurred())
-		})
-		var _ = It("return error if cannot release IP from IPAM", func() {
-			getVFList = fakeGetVFListSingle
-			linkByName = fakeLinkByName
-			addrList = fakeAddrListWithResult
-			addrDel = fakeAddrAddDel
-			releaseIPFromIPAM = fakeReleaseIPFromIPAMErr
-			_, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
-			Expect(err).To(HaveOccurred())
-		})
-		var _ = It("return error if cannot get IP from IPAM", func() {
-			getVFList = fakeGetVFListSingle
-			linkByName = fakeLinkByName
-			addrList = fakeAddrListWithResult
-			addrDel = fakeAddrAddDel
-			releaseIPFromIPAM = fakeReleaseIPFromIPAM
-			getIPFromIPAM = fakeGetIPFromIPAMErr
 			_, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).To(HaveOccurred())
 		})
@@ -1852,6 +1845,14 @@ func fakeDelLinkByName(name string) error {
 
 func fakeDelLinkByNameErr(name string) error {
 	return errors.New("Fake error on delLinkByName")
+}
+
+func fakeSendSetupBackendtInterface(request *proto.CreateNetworkRequest) error {
+	return nil
+}
+
+func fakeSendSetupBackendtInterfaceErr(request *proto.CreateNetworkRequest) error {
+	return errors.New(("Fake error on sendSetupBackendInterface"))
 }
 
 func fakeSendSetupHostInterface(request *proto.SetupHostInterfaceRequest) error {
