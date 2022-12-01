@@ -126,7 +126,7 @@ var _ = Describe("Storeendpoint", func() {
 				store.NewEndPoint()
 			})
 
-			It("writes the data to the store if data is valud and returns true", func() {
+			It("writes the data to the store if data is valid and returns true", func() {
 				data_valid := store.EndPoint{
 					PodIpAddress:  "10.10.10.2",
 					InterfaceID:   2,
@@ -232,7 +232,7 @@ var _ = Describe("Storeendpoint", func() {
 				Expect(ret).To(Equal(data_valid))
 			})
 
-			It("returns error when pod ip address is invalid", func() {
+			It("returns nil when pod ip address is invalid", func() {
 				data_invalid1 := store.EndPoint{
 					PodIpAddress:  "10.df.90.jh",
 					InterfaceID:   1,
@@ -242,7 +242,7 @@ var _ = Describe("Storeendpoint", func() {
 				Expect(ret).Should(BeNil())
 			})
 
-			It("returns error when mac address is invalid", func() {
+			It("returns nil when mac address is invalid", func() {
 				data_invalid3 := store.EndPoint{
 					PodIpAddress:  "10.10.10.1",
 					InterfaceID:   1,
@@ -611,7 +611,7 @@ var _ = Describe("Storeservice", func() {
 				Expect(ret).Should(BeNil())
 			})
 
-			It("returns false when input is invalid", func() {
+			It("returns nil when input is invalid", func() {
 				ep1 := store.ServiceEndPoint{
 					IpAddress: "10.10.10.1",
 					Port:      8081,
@@ -673,7 +673,7 @@ var _ = Describe("Storeservice", func() {
 				store.JsonMarshalIndent = restorejsonmarshalindent
 			})
 
-			It("return true", func() {
+			It("returns true", func() {
 				ret := store.RunSyncServiceInfo()
 				Expect(ret).To(Equal(true))
 			})
