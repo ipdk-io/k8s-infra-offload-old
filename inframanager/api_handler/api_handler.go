@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -701,15 +700,15 @@ func (s *ApiServer) SetupHostInterface(ctx context.Context, in *proto.SetupHostI
 
 	ipAddr := strings.Split(in.Ipv4Addr, "/")[0]
 	macAddr := in.MacAddr
-	portName := in.IfName
-	tmpName := strings.Split(portName, "_")
-	portIDStr := tmpName[1]
-	portID, err := strconv.ParseInt(portIDStr, 10, 32)
+	portID, err := getPortID(in.IfName)
 	if err != nil {
-		logger.Errorf("Failed to convert port id to int %s", portIDStr)
+		logger.Errorf("Failed to get port id for %s, err: %v",
+			in.IfName, err)
 		out.Successful = false
 		return out, err
 	}
+
+	logger.Infof("Interface: %s, port id: %d", in.IfName, portID)
 
 	status, err := insertRule(s.log, ctx, server.p4RtC, macAddr,
 		ipAddr, int(portID), p4.HOST)
