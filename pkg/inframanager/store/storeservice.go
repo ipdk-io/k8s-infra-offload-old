@@ -15,9 +15,8 @@
 package store
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"net"
 	"os"
 	"reflect"
 
@@ -25,10 +24,10 @@ import (
 )
 
 const (
-	servicesFile = "/opt/inframanager/services_db.json"
+	ServicesFile = "/opt/inframanager/services_db.json"
 )
 
-func isServiceStoreEmpty() bool {
+func IsServiceStoreEmpty() bool {
 	if len(ServiceSet.ServiceMap) == 0 {
 		return true
 	} else {
@@ -51,16 +50,16 @@ func InitServiceStore(setFwdPipe bool) bool {
 	}
 
 	/* Create the store file if it doesn't exist */
-	file, err := os.OpenFile(servicesFile, flags, 0600)
+	file, err := NewOpenFile(ServicesFile, flags, 0600)
 	if err != nil {
-		log.Error("Failed to open", servicesFile)
+		log.Error("Failed to open", ServicesFile)
 		return false
 	}
 	file.Close()
 
-	data, err := os.ReadFile(servicesFile)
+	data, err := NewReadFile(ServicesFile)
 	if err != nil {
-		log.Error("Error reading ", servicesFile, err)
+		log.Error("Error reading ", ServicesFile, err)
 		return false
 	}
 
@@ -68,9 +67,9 @@ func InitServiceStore(setFwdPipe bool) bool {
 		return true
 	}
 
-	err = json.Unmarshal(data, &ServiceSet.ServiceMap)
+	err = JsonUnmarshal(data, &ServiceSet.ServiceMap)
 	if err != nil {
-		log.Error("Error unmarshalling data from ", servicesFile, err)
+		log.Error("Error unmarshalling data from ", ServicesFile, err)
 		return false
 	}
 
@@ -78,6 +77,10 @@ func InitServiceStore(setFwdPipe bool) bool {
 }
 
 func (s Service) WriteToStore() bool {
+	if net.ParseIP(s.ClusterIp) == nil {
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
+		return false
+	}
 	//aquire lock before adding entry into the map
 	ServiceSet.ServiceLock.Lock()
 	//append tmp entry to the map
@@ -88,6 +91,17 @@ func (s Service) WriteToStore() bool {
 }
 
 func (s Service) DeleteFromStore() bool {
+	if net.ParseIP(s.ClusterIp) == nil {
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
+		return false
+	}
+
+	res := ServiceSet.ServiceMap[s.ClusterIp]
+	if reflect.DeepEqual(res, Service{}) {
+		log.Errorf("corresponding service entry is not found in the store for %s", s.ClusterIp)
+		return false
+	}
+
 	//aquire lock before adding entry into the map
 	ServiceSet.ServiceLock.Lock()
 	//delete tmp entry from the map
@@ -98,6 +112,10 @@ func (s Service) DeleteFromStore() bool {
 }
 
 func (s Service) GetFromStore() store {
+	if net.ParseIP(s.ClusterIp) == nil {
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
+		return nil
+	}
 
 	res := ServiceSet.ServiceMap[s.ClusterIp]
 	if reflect.DeepEqual(res, Service{}) {
@@ -113,15 +131,15 @@ func (s Service) UpdateToStore() bool {
 }
 
 func RunSyncServiceInfo() bool {
-	jsonStr, err := json.MarshalIndent(ServiceSet.ServiceMap, "", " ")
+	jsonStr, err := JsonMarshalIndent(ServiceSet.ServiceMap, "", " ")
 	if err != nil {
 		log.Errorf("Failed to marshal service entries map %s", err)
 		return false
 	}
 
-	if err = ioutil.WriteFile(servicesFile, jsonStr, 0600); err != nil {
+	if err = NewWriteFile(ServicesFile, jsonStr, 0600); err != nil {
 		log.Errorf("Failed to write entries to %s, err %s",
-			servicesFile, err)
+			ServicesFile, err)
 		return false
 	}
 	return true
