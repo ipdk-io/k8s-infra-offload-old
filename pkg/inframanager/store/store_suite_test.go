@@ -26,7 +26,7 @@ func fakewritefile(fn string, data []byte, permission fs.FileMode) error {
 }
 
 func fakereadfile(fn string) ([]byte, error) {
-	return []byte{}, errors.New("VISH:Reading from file failed")
+	return []byte{}, errors.New("Reading from file failed")
 }
 
 func fakeopenfile(name string, flag int, perm fs.FileMode) (*os.File, error) {
