@@ -17,7 +17,8 @@ package types
 import (
 	"context"
 
-	pb "github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
+
 	"gopkg.in/tomb.v2"
 )
 
@@ -64,10 +65,10 @@ var (
 )
 
 type PodInterface interface {
-	CreatePodInterface(in *pb.AddRequest) (*InterfaceInfo, error)
-	ReleasePodInterface(in *pb.DelRequest) error
-	SetupNetwork(context.Context, pb.InfraAgentClient, *InterfaceInfo, *pb.AddRequest) (*pb.AddReply, error)
-	ReleaseNetwork(context.Context, pb.InfraAgentClient, *pb.DelRequest) (*pb.DelReply, error)
+	CreatePodInterface(in *proto.AddRequest) (*InterfaceInfo, error)
+	ReleasePodInterface(in *proto.DelRequest) error
+	SetupNetwork(context.Context, proto.InfraCniClient, *InterfaceInfo, *proto.AddRequest) (*proto.AddReply, error)
+	ReleaseNetwork(context.Context, proto.InfraCniClient, *proto.DelRequest) (*proto.DelReply, error)
 }
 
 type Server interface {

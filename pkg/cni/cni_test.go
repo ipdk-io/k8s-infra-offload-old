@@ -29,7 +29,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/mock_proto"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
-	"github.com/ipdk-io/k8s-infra-offload/proto"
+
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/sirupsen/logrus"
@@ -48,7 +50,7 @@ const (
 
 var (
 	mockCrtl       *gomock.Controller
-	mockClient     *mock_proto.MockInfraAgentClient
+	mockClient     *mock_proto.MockInfraCniClient
 	listener       *bufconn.Listener
 	listenFuncBack func(string, string) (net.Listener, error)
 	rg             *rand.Rand
@@ -71,11 +73,11 @@ func (pi *podInterfaceMock) ReleasePodInterface(in *proto.DelRequest) error {
 	return pi.releasePodInterfaceErr
 }
 
-func (pi *podInterfaceMock) SetupNetwork(context.Context, proto.InfraAgentClient, *types.InterfaceInfo, *proto.AddRequest) (*proto.AddReply, error) {
+func (pi *podInterfaceMock) SetupNetwork(context.Context, proto.InfraCniClient, *types.InterfaceInfo, *proto.AddRequest) (*proto.AddReply, error) {
 	return pi.addReply, pi.addReplyErr
 }
 
-func (pi *podInterfaceMock) ReleaseNetwork(context.Context, proto.InfraAgentClient, *proto.DelRequest) (*proto.DelReply, error) {
+func (pi *podInterfaceMock) ReleaseNetwork(context.Context, proto.InfraCniClient, *proto.DelRequest) (*proto.DelReply, error) {
 	return pi.delReply, pi.addReplyErr
 }
 
@@ -126,7 +128,7 @@ func (fns *fakeNetNS) Close() error {
 
 func TestCni(t *testing.T) {
 	mockCrtl = gomock.NewController(t)
-	mockClient = mock_proto.NewMockInfraAgentClient(mockCrtl)
+	mockClient = mock_proto.NewMockInfraCniClient(mockCrtl)
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "CNI backend Test Suite")
 }
@@ -134,7 +136,7 @@ func TestCni(t *testing.T) {
 var _ = Describe("CNI backend server", func() {
 	var _ = BeforeSuite(func() {
 		listener = bufconn.Listen(bufSize)
-		newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraAgentClient {
+		newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraCniClient {
 			return mockClient
 		}
 	})
@@ -156,7 +158,7 @@ var _ = Describe("CNI backend server", func() {
 				in := &proto.AddRequest{}
 				err := json.Unmarshal([]byte(addRequest), in)
 				Expect(err).ToNot(HaveOccurred())
-				newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraAgentClient {
+				newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraCniClient {
 					return mockClient
 				}
 				server := &CniServer{

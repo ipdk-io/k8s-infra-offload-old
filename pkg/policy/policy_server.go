@@ -21,7 +21,7 @@ import (
 	"os"
 
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
-	pb "github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -30,10 +30,10 @@ import (
 )
 
 var (
-	grpcDial              = grpc.Dial
-	pbNewInfraAgentClient = pb.NewInfraAgentClient
-	cancellableListener   = getCancellableListener
-	removeSocket          = os.RemoveAll
+	grpcDial            = grpc.Dial
+	newInfraAgentClient = proto.NewInfraPolicyClient
+	cancellableListener = getCancellableListener
+	removeSocket        = os.RemoveAll
 )
 
 type PolicyServer struct {
@@ -65,9 +65,9 @@ func (s *PolicyServer) SyncPolicy(conn net.Conn) {
 		}
 		s.log.Infof("Got message from felix %T", msg)
 		switch m := msg.(type) {
-		case *pb.ConfigUpdate:
+		case *proto.ConfigUpdate:
 			err = s.handleConfigUpdate(m)
-		case *pb.InSync:
+		case *proto.InSync:
 			err = s.handleInSyc(m)
 		default:
 			err = s.handleMessage(msg, false)
@@ -84,57 +84,57 @@ func (s *PolicyServer) SyncPolicy(conn net.Conn) {
 
 func (s *PolicyServer) handleMessage(msg interface{}, pending bool) error {
 	switch m := msg.(type) {
-	case *pb.IPSetUpdate:
+	case *proto.IPSetUpdate:
 		return s.handleIpsetUpdate(m, pending)
-	case *pb.IPSetDeltaUpdate:
+	case *proto.IPSetDeltaUpdate:
 		return s.handleIpsetDeltaUpdate(m, pending)
-	case *pb.IPSetRemove:
+	case *proto.IPSetRemove:
 		return s.handleIpsetRemove(m, pending)
-	case *pb.ActivePolicyUpdate:
+	case *proto.ActivePolicyUpdate:
 		return s.handleActivePolicyUpdate(m, pending)
-	case *pb.ActivePolicyRemove:
+	case *proto.ActivePolicyRemove:
 		return s.handleActivePolicyRemove(m, pending)
-	case *pb.ActiveProfileUpdate:
+	case *proto.ActiveProfileUpdate:
 		return s.handleActiveProfileUpdate(m, pending)
-	case *pb.ActiveProfileRemove:
+	case *proto.ActiveProfileRemove:
 		return s.handleActiveProfileRemove(m, pending)
-	case *pb.HostEndpointUpdate:
+	case *proto.HostEndpointUpdate:
 		return s.handleHostEndpointUpdate(m, pending)
-	case *pb.HostEndpointRemove:
+	case *proto.HostEndpointRemove:
 		return s.handleHostEndpointRemove(m, pending)
-	case *pb.WorkloadEndpointUpdate:
+	case *proto.WorkloadEndpointUpdate:
 		return s.handleWorkloadEndpointUpdate(m, pending)
-	case *pb.WorkloadEndpointRemove:
+	case *proto.WorkloadEndpointRemove:
 		return s.handleWorkloadEndpointRemove(m, pending)
-	case *pb.HostMetadataUpdate:
+	case *proto.HostMetadataUpdate:
 		return s.handleHostMetadataUpdate(m, pending)
-	case *pb.HostMetadataRemove:
+	case *proto.HostMetadataRemove:
 		return s.handleHostMetadataRemove(m, pending)
-	case *pb.IPAMPoolUpdate:
+	case *proto.IPAMPoolUpdate:
 		return s.handleIpamPoolUpdate(m, pending)
-	case *pb.IPAMPoolRemove:
+	case *proto.IPAMPoolRemove:
 		return s.handleIpamPoolRemove(m, pending)
-	case *pb.ServiceAccountUpdate:
+	case *proto.ServiceAccountUpdate:
 		return s.handleServiceAccountUpdate(m, pending)
-	case *pb.ServiceAccountRemove:
+	case *proto.ServiceAccountRemove:
 		return s.handleServiceAccountRemove(m, pending)
-	case *pb.NamespaceUpdate:
+	case *proto.NamespaceUpdate:
 		return s.handleNamespaceUpdate(m, pending)
-	case *pb.NamespaceRemove:
+	case *proto.NamespaceRemove:
 		return s.handleNamespaceRemove(m, pending)
-	case *pb.RouteUpdate:
+	case *proto.RouteUpdate:
 		return s.handleRouteUpdate(m, pending)
-	case *pb.RouteRemove:
+	case *proto.RouteRemove:
 		return s.handleRouteRemove(m, pending)
-	case *pb.VXLANTunnelEndpointRemove:
+	case *proto.VXLANTunnelEndpointRemove:
 		return s.handleVXLANTunnelEndpointRemove(m, pending)
-	case *pb.VXLANTunnelEndpointUpdate:
+	case *proto.VXLANTunnelEndpointUpdate:
 		return s.handleVXLANTunnelEndpointUpdate(m, pending)
-	case *pb.WireguardEndpointUpdate:
+	case *proto.WireguardEndpointUpdate:
 		return s.handleWireguardEndpointUpdate(m, pending)
-	case *pb.WireguardEndpointRemove:
+	case *proto.WireguardEndpointRemove:
 		return s.handleWireguardEndpointRemove(m, pending)
-	case *pb.GlobalBGPConfigUpdate:
+	case *proto.GlobalBGPConfigUpdate:
 		return s.handleGlobalBGPConfigUpdate(m, pending)
 	default:
 		s.log.Warnf("Unhandled message from felix: %v", m)
@@ -147,20 +147,20 @@ func (s *PolicyServer) StopServer() {
 }
 
 // Not needed?
-func (s *PolicyServer) handleConfigUpdate(msg *pb.ConfigUpdate) error {
+func (s *PolicyServer) handleConfigUpdate(msg *proto.ConfigUpdate) error {
 	s.log.Infof("Got config update %+v", msg)
 	return nil
 }
 
 // Not needed?
-func (s *PolicyServer) handleInSyc(msg *pb.InSync) error {
+func (s *PolicyServer) handleInSyc(msg *proto.InSync) error {
 	s.log.Infof("Got in sync %+v", msg)
 	return nil
 }
 
-func (s *PolicyServer) handleIpsetUpdate(msg *pb.IPSetUpdate, pending bool) error {
+func (s *PolicyServer) handleIpsetUpdate(msg *proto.IPSetUpdate, pending bool) error {
 	s.log.Infof("Got ipset update %+v pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -175,9 +175,9 @@ func (s *PolicyServer) handleIpsetUpdate(msg *pb.IPSetUpdate, pending bool) erro
 	return nil
 }
 
-func (s *PolicyServer) handleIpsetDeltaUpdate(msg *pb.IPSetDeltaUpdate, pending bool) error {
+func (s *PolicyServer) handleIpsetDeltaUpdate(msg *proto.IPSetDeltaUpdate, pending bool) error {
 	s.log.Infof("Got ipset delta update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -192,9 +192,9 @@ func (s *PolicyServer) handleIpsetDeltaUpdate(msg *pb.IPSetDeltaUpdate, pending 
 	return nil
 }
 
-func (s *PolicyServer) handleIpsetRemove(msg *pb.IPSetRemove, pending bool) error {
+func (s *PolicyServer) handleIpsetRemove(msg *proto.IPSetRemove, pending bool) error {
 	s.log.Infof("Got ipset remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -209,9 +209,9 @@ func (s *PolicyServer) handleIpsetRemove(msg *pb.IPSetRemove, pending bool) erro
 	return nil
 }
 
-func (s *PolicyServer) handleActivePolicyUpdate(msg *pb.ActivePolicyUpdate, pending bool) error {
+func (s *PolicyServer) handleActivePolicyUpdate(msg *proto.ActivePolicyUpdate, pending bool) error {
 	s.log.Infof("Got active police update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -226,9 +226,9 @@ func (s *PolicyServer) handleActivePolicyUpdate(msg *pb.ActivePolicyUpdate, pend
 	return nil
 }
 
-func (s *PolicyServer) handleActivePolicyRemove(msg *pb.ActivePolicyRemove, pending bool) error {
+func (s *PolicyServer) handleActivePolicyRemove(msg *proto.ActivePolicyRemove, pending bool) error {
 	s.log.Infof("Got active police remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -243,9 +243,9 @@ func (s *PolicyServer) handleActivePolicyRemove(msg *pb.ActivePolicyRemove, pend
 	return nil
 }
 
-func (s *PolicyServer) handleActiveProfileUpdate(msg *pb.ActiveProfileUpdate, pending bool) error {
+func (s *PolicyServer) handleActiveProfileUpdate(msg *proto.ActiveProfileUpdate, pending bool) error {
 	s.log.Infof("Got active profile update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -260,9 +260,9 @@ func (s *PolicyServer) handleActiveProfileUpdate(msg *pb.ActiveProfileUpdate, pe
 	return nil
 }
 
-func (s *PolicyServer) handleActiveProfileRemove(msg *pb.ActiveProfileRemove, pending bool) error {
+func (s *PolicyServer) handleActiveProfileRemove(msg *proto.ActiveProfileRemove, pending bool) error {
 	s.log.Infof("Got active profile remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -277,16 +277,16 @@ func (s *PolicyServer) handleActiveProfileRemove(msg *pb.ActiveProfileRemove, pe
 	return nil
 }
 
-func (s *PolicyServer) handleHostEndpointUpdate(msg *pb.HostEndpointUpdate, pending bool) error {
+func (s *PolicyServer) handleHostEndpointUpdate(msg *proto.HostEndpointUpdate, pending bool) error {
 	s.log.Infof("Got host endpoint update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
 	if err != nil {
 		return errors.Wrap(err, "cannot process handleHostEndpointUpdate: cannot dial manager")
 	}
-	// TODO: Add pending flag
+
 	out, err = c.UpdateHostEndpoint(context.TODO(), msg)
 	if err != nil || !out.Successful {
 		return errors.Wrap(err, "cannot process handleHostEndpointUpdate")
@@ -294,16 +294,16 @@ func (s *PolicyServer) handleHostEndpointUpdate(msg *pb.HostEndpointUpdate, pend
 	return nil
 }
 
-func (s *PolicyServer) handleHostEndpointRemove(msg *pb.HostEndpointRemove, pending bool) error {
+func (s *PolicyServer) handleHostEndpointRemove(msg *proto.HostEndpointRemove, pending bool) error {
 	s.log.Infof("Got host endpoint remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
 	if err != nil {
 		return errors.Wrap(err, "cannot process handleHostEndpointRemove: cannot dial manager")
 	}
-	// TODO: Add pending flag
+
 	out, err = c.RemoveHostEndpoint(context.TODO(), msg)
 	if err != nil || !out.Successful {
 		return errors.Wrap(err, "cannot process handleHostEndpointRemove")
@@ -311,16 +311,16 @@ func (s *PolicyServer) handleHostEndpointRemove(msg *pb.HostEndpointRemove, pend
 	return nil
 }
 
-func (s *PolicyServer) handleWorkloadEndpointUpdate(msg *pb.WorkloadEndpointUpdate, pending bool) error {
+func (s *PolicyServer) handleWorkloadEndpointUpdate(msg *proto.WorkloadEndpointUpdate, pending bool) error {
 	s.log.Infof("Got workload endpoint update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
 	if err != nil {
 		return errors.Wrap(err, "cannot process handleWorkloadEndpointUpdate: cannot dial manager")
 	}
-	// TODO: Add pending flag
+
 	out, err = c.UpdateLocalEndpoint(context.TODO(), msg)
 	if err != nil || !out.Successful {
 		return errors.Wrap(err, "cannot process handleWorkloadEndpointUpdate")
@@ -328,9 +328,9 @@ func (s *PolicyServer) handleWorkloadEndpointUpdate(msg *pb.WorkloadEndpointUpda
 	return nil
 }
 
-func (s *PolicyServer) handleWorkloadEndpointRemove(msg *pb.WorkloadEndpointRemove, pending bool) error {
+func (s *PolicyServer) handleWorkloadEndpointRemove(msg *proto.WorkloadEndpointRemove, pending bool) error {
 	s.log.Infof("Got workload endpoint remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -345,9 +345,9 @@ func (s *PolicyServer) handleWorkloadEndpointRemove(msg *pb.WorkloadEndpointRemo
 	return nil
 }
 
-func (s *PolicyServer) handleHostMetadataUpdate(msg *pb.HostMetadataUpdate, pending bool) error {
+func (s *PolicyServer) handleHostMetadataUpdate(msg *proto.HostMetadataUpdate, pending bool) error {
 	s.log.Infof("Got host metadata update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -362,9 +362,9 @@ func (s *PolicyServer) handleHostMetadataUpdate(msg *pb.HostMetadataUpdate, pend
 	return nil
 }
 
-func (s *PolicyServer) handleHostMetadataRemove(msg *pb.HostMetadataRemove, pending bool) error {
+func (s *PolicyServer) handleHostMetadataRemove(msg *proto.HostMetadataRemove, pending bool) error {
 	s.log.Infof("Got host metadata remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -380,20 +380,20 @@ func (s *PolicyServer) handleHostMetadataRemove(msg *pb.HostMetadataRemove, pend
 }
 
 // Not needed?
-func (s *PolicyServer) handleIpamPoolUpdate(msg *pb.IPAMPoolUpdate, pending bool) error {
+func (s *PolicyServer) handleIpamPoolUpdate(msg *proto.IPAMPoolUpdate, pending bool) error {
 	s.log.Infof("Got ipam pool update %+v, pending %v", msg, pending)
 	return nil
 }
 
 // Not needed?
-func (s *PolicyServer) handleIpamPoolRemove(msg *pb.IPAMPoolRemove, pending bool) error {
+func (s *PolicyServer) handleIpamPoolRemove(msg *proto.IPAMPoolRemove, pending bool) error {
 	s.log.Infof("Got ipam pool remove %+v, pending %v", msg, pending)
 	return nil
 }
 
-func (s *PolicyServer) handleServiceAccountUpdate(msg *pb.ServiceAccountUpdate, pending bool) error {
+func (s *PolicyServer) handleServiceAccountUpdate(msg *proto.ServiceAccountUpdate, pending bool) error {
 	s.log.Infof("Got service account update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -408,9 +408,9 @@ func (s *PolicyServer) handleServiceAccountUpdate(msg *pb.ServiceAccountUpdate, 
 	return nil
 }
 
-func (s *PolicyServer) handleServiceAccountRemove(msg *pb.ServiceAccountRemove, pending bool) error {
+func (s *PolicyServer) handleServiceAccountRemove(msg *proto.ServiceAccountRemove, pending bool) error {
 	s.log.Infof("Got service account remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -425,9 +425,9 @@ func (s *PolicyServer) handleServiceAccountRemove(msg *pb.ServiceAccountRemove, 
 	return nil
 }
 
-func (s *PolicyServer) handleNamespaceUpdate(msg *pb.NamespaceUpdate, pending bool) error {
+func (s *PolicyServer) handleNamespaceUpdate(msg *proto.NamespaceUpdate, pending bool) error {
 	s.log.Infof("Got namespace update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -442,9 +442,9 @@ func (s *PolicyServer) handleNamespaceUpdate(msg *pb.NamespaceUpdate, pending bo
 	return nil
 }
 
-func (s *PolicyServer) handleNamespaceRemove(msg *pb.NamespaceRemove, pending bool) error {
+func (s *PolicyServer) handleNamespaceRemove(msg *proto.NamespaceRemove, pending bool) error {
 	s.log.Infof("Got namespace remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -459,9 +459,9 @@ func (s *PolicyServer) handleNamespaceRemove(msg *pb.NamespaceRemove, pending bo
 	return nil
 }
 
-func (s *PolicyServer) handleRouteUpdate(msg *pb.RouteUpdate, pending bool) error {
+func (s *PolicyServer) handleRouteUpdate(msg *proto.RouteUpdate, pending bool) error {
 	s.log.Infof("Got route update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -476,9 +476,9 @@ func (s *PolicyServer) handleRouteUpdate(msg *pb.RouteUpdate, pending bool) erro
 	return nil
 }
 
-func (s *PolicyServer) handleRouteRemove(msg *pb.RouteRemove, pending bool) error {
+func (s *PolicyServer) handleRouteRemove(msg *proto.RouteRemove, pending bool) error {
 	s.log.Infof("Got route remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -493,9 +493,9 @@ func (s *PolicyServer) handleRouteRemove(msg *pb.RouteRemove, pending bool) erro
 	return nil
 }
 
-func (s *PolicyServer) handleVXLANTunnelEndpointUpdate(msg *pb.VXLANTunnelEndpointUpdate, pending bool) error {
+func (s *PolicyServer) handleVXLANTunnelEndpointUpdate(msg *proto.VXLANTunnelEndpointUpdate, pending bool) error {
 	s.log.Infof("Got VXLAN tunnel endpoint update %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -510,9 +510,9 @@ func (s *PolicyServer) handleVXLANTunnelEndpointUpdate(msg *pb.VXLANTunnelEndpoi
 	return nil
 }
 
-func (s *PolicyServer) handleVXLANTunnelEndpointRemove(msg *pb.VXLANTunnelEndpointRemove, pending bool) error {
+func (s *PolicyServer) handleVXLANTunnelEndpointRemove(msg *proto.VXLANTunnelEndpointRemove, pending bool) error {
 	s.log.Infof("Got VXLAN tunnel endpoint remove %+v, pending %v", msg, pending)
-	out := &pb.Reply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 	c, err := s.dialManager()
@@ -527,22 +527,22 @@ func (s *PolicyServer) handleVXLANTunnelEndpointRemove(msg *pb.VXLANTunnelEndpoi
 	return nil
 }
 
-func (s *PolicyServer) handleWireguardEndpointUpdate(msg *pb.WireguardEndpointUpdate, pending bool) error {
+func (s *PolicyServer) handleWireguardEndpointUpdate(msg *proto.WireguardEndpointUpdate, pending bool) error {
 	s.log.Infof("Got Wireguard endpoint update %+v, pending %v", msg, pending)
 	return nil
 }
 
-func (s *PolicyServer) handleWireguardEndpointRemove(msg *pb.WireguardEndpointRemove, pending bool) error {
+func (s *PolicyServer) handleWireguardEndpointRemove(msg *proto.WireguardEndpointRemove, pending bool) error {
 	s.log.Infof("Got Wireguard endpoint remove %+v, pending %v", msg, pending)
 	return nil
 }
 
-func (s *PolicyServer) handleGlobalBGPConfigUpdate(msg *pb.GlobalBGPConfigUpdate, pending bool) error {
+func (s *PolicyServer) handleGlobalBGPConfigUpdate(msg *proto.GlobalBGPConfigUpdate, pending bool) error {
 	s.log.Infof("Got GlobalBGPConfig update %+v, pending %v", msg, pending)
 	return nil
 }
 
-func (s *PolicyServer) dialManager() (pb.InfraAgentClient, error) {
+func (s *PolicyServer) dialManager() (proto.InfraPolicyClient, error) {
 	managerAddr := fmt.Sprintf("%s:%s", types.InfraManagerAddr, types.InfraManagerPort)
 	conn, err := grpcDial(managerAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -550,7 +550,7 @@ func (s *PolicyServer) dialManager() (pb.InfraAgentClient, error) {
 		s.log.Errorf("unable to dial Infra Manager. err %v", err)
 		return nil, err
 	}
-	return pbNewInfraAgentClient(conn), nil
+	return newInfraAgentClient(conn), nil
 }
 
 func getCancellableListener(ctx context.Context) (net.Listener, error) {

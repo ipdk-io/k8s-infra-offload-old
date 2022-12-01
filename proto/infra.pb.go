@@ -26,6 +26,61 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type Reply struct {
+	Successful           bool     `protobuf:"varint,1,opt,name=successful,proto3" json:"successful,omitempty"`
+	ErrorMessage         string   `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Reply) Reset()         { *m = Reply{} }
+func (m *Reply) String() string { return proto.CompactTextString(m) }
+func (*Reply) ProtoMessage()    {}
+func (*Reply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cd059abf8f713b80, []int{0}
+}
+func (m *Reply) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Reply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Reply.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Reply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Reply.Merge(m, src)
+}
+func (m *Reply) XXX_Size() int {
+	return m.Size()
+}
+func (m *Reply) XXX_DiscardUnknown() {
+	xxx_messageInfo_Reply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Reply proto.InternalMessageInfo
+
+func (m *Reply) GetSuccessful() bool {
+	if m != nil {
+		return m.Successful
+	}
+	return false
+}
+
+func (m *Reply) GetErrorMessage() string {
+	if m != nil {
+		return m.ErrorMessage
+	}
+	return ""
+}
+
 type NatEndpoint struct {
 	Ipv4Addr             string   `protobuf:"bytes,1,opt,name=ipv4_addr,json=ipv4Addr,proto3" json:"ipv4_addr,omitempty"`
 	Port                 uint32   `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
@@ -38,7 +93,7 @@ func (m *NatEndpoint) Reset()         { *m = NatEndpoint{} }
 func (m *NatEndpoint) String() string { return proto.CompactTextString(m) }
 func (*NatEndpoint) ProtoMessage()    {}
 func (*NatEndpoint) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cd059abf8f713b80, []int{0}
+	return fileDescriptor_cd059abf8f713b80, []int{1}
 }
 func (m *NatEndpoint) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -93,7 +148,7 @@ func (m *NatEndpointTuple) Reset()         { *m = NatEndpointTuple{} }
 func (m *NatEndpointTuple) String() string { return proto.CompactTextString(m) }
 func (*NatEndpointTuple) ProtoMessage()    {}
 func (*NatEndpointTuple) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cd059abf8f713b80, []int{1}
+	return fileDescriptor_cd059abf8f713b80, []int{2}
 }
 func (m *NatEndpointTuple) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -150,7 +205,7 @@ func (m *NatTranslation) Reset()         { *m = NatTranslation{} }
 func (m *NatTranslation) String() string { return proto.CompactTextString(m) }
 func (*NatTranslation) ProtoMessage()    {}
 func (*NatTranslation) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cd059abf8f713b80, []int{2}
+	return fileDescriptor_cd059abf8f713b80, []int{3}
 }
 func (m *NatTranslation) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -205,61 +260,6 @@ func (m *NatTranslation) GetBackends() []*NatEndpointTuple {
 		return m.Backends
 	}
 	return nil
-}
-
-type Reply struct {
-	Successful           bool     `protobuf:"varint,1,opt,name=successful,proto3" json:"successful,omitempty"`
-	ErrorMessage         string   `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Reply) Reset()         { *m = Reply{} }
-func (m *Reply) String() string { return proto.CompactTextString(m) }
-func (*Reply) ProtoMessage()    {}
-func (*Reply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cd059abf8f713b80, []int{3}
-}
-func (m *Reply) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Reply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Reply.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *Reply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Reply.Merge(m, src)
-}
-func (m *Reply) XXX_Size() int {
-	return m.Size()
-}
-func (m *Reply) XXX_DiscardUnknown() {
-	xxx_messageInfo_Reply.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Reply proto.InternalMessageInfo
-
-func (m *Reply) GetSuccessful() bool {
-	if m != nil {
-		return m.Successful
-	}
-	return false
-}
-
-func (m *Reply) GetErrorMessage() string {
-	if m != nil {
-		return m.ErrorMessage
-	}
-	return ""
 }
 
 type SetSnatAddressRequest struct {
@@ -373,12 +373,13 @@ func (m *AddDelSnatPrefixRequest) GetPrefix() string {
 }
 
 type CreateNetworkRequest struct {
-	AddRequest           *AddRequest `protobuf:"bytes,1,opt,name=add_request,json=addRequest,proto3" json:"add_request,omitempty"`
-	HostIfName           string      `protobuf:"bytes,2,opt,name=host_if_name,json=hostIfName,proto3" json:"host_if_name,omitempty"`
-	MacAddr              string      `protobuf:"bytes,3,opt,name=mac_addr,json=macAddr,proto3" json:"mac_addr,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
+	ContainerIps             []*IPConfiguration `protobuf:"bytes,1,rep,name=container_ips,json=containerIps,proto3" json:"container_ips,omitempty"`
+	DesiredHostInterfaceName string             `protobuf:"bytes,2,opt,name=desired_host_interface_name,json=desiredHostInterfaceName,proto3" json:"desired_host_interface_name,omitempty"`
+	HostIfName               string             `protobuf:"bytes,3,opt,name=host_if_name,json=hostIfName,proto3" json:"host_if_name,omitempty"`
+	MacAddr                  string             `protobuf:"bytes,4,opt,name=mac_addr,json=macAddr,proto3" json:"mac_addr,omitempty"`
+	XXX_NoUnkeyedLiteral     struct{}           `json:"-"`
+	XXX_unrecognized         []byte             `json:"-"`
+	XXX_sizecache            int32              `json:"-"`
 }
 
 func (m *CreateNetworkRequest) Reset()         { *m = CreateNetworkRequest{} }
@@ -414,11 +415,18 @@ func (m *CreateNetworkRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateNetworkRequest proto.InternalMessageInfo
 
-func (m *CreateNetworkRequest) GetAddRequest() *AddRequest {
+func (m *CreateNetworkRequest) GetContainerIps() []*IPConfiguration {
 	if m != nil {
-		return m.AddRequest
+		return m.ContainerIps
 	}
 	return nil
+}
+
+func (m *CreateNetworkRequest) GetDesiredHostInterfaceName() string {
+	if m != nil {
+		return m.DesiredHostInterfaceName
+	}
+	return ""
 }
 
 func (m *CreateNetworkRequest) GetHostIfName() string {
@@ -436,13 +444,13 @@ func (m *CreateNetworkRequest) GetMacAddr() string {
 }
 
 type DeleteNetworkRequest struct {
-	DelRequest           *DelRequest `protobuf:"bytes,1,opt,name=del_request,json=delRequest,proto3" json:"del_request,omitempty"`
-	HostIfName           string      `protobuf:"bytes,2,opt,name=host_if_name,json=hostIfName,proto3" json:"host_if_name,omitempty"`
-	MacAddr              string      `protobuf:"bytes,3,opt,name=mac_addr,json=macAddr,proto3" json:"mac_addr,omitempty"`
-	Ipv4Addr             string      `protobuf:"bytes,4,opt,name=ipv4_addr,json=ipv4Addr,proto3" json:"ipv4_addr,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
+	InterfaceName        string   `protobuf:"bytes,1,opt,name=interface_name,json=interfaceName,proto3" json:"interface_name,omitempty"`
+	HostIfName           string   `protobuf:"bytes,2,opt,name=host_if_name,json=hostIfName,proto3" json:"host_if_name,omitempty"`
+	MacAddr              string   `protobuf:"bytes,3,opt,name=mac_addr,json=macAddr,proto3" json:"mac_addr,omitempty"`
+	Ipv4Addr             string   `protobuf:"bytes,4,opt,name=ipv4_addr,json=ipv4Addr,proto3" json:"ipv4_addr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DeleteNetworkRequest) Reset()         { *m = DeleteNetworkRequest{} }
@@ -478,11 +486,11 @@ func (m *DeleteNetworkRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteNetworkRequest proto.InternalMessageInfo
 
-func (m *DeleteNetworkRequest) GetDelRequest() *DelRequest {
+func (m *DeleteNetworkRequest) GetInterfaceName() string {
 	if m != nil {
-		return m.DelRequest
+		return m.InterfaceName
 	}
-	return nil
+	return ""
 }
 
 func (m *DeleteNetworkRequest) GetHostIfName() string {
@@ -569,86 +577,212 @@ func (m *SetupHostInterfaceRequest) GetMacAddr() string {
 	return ""
 }
 
+type IPConfiguration struct {
+	Address              string   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	Gateway              string   `protobuf:"bytes,2,opt,name=gateway,proto3" json:"gateway,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IPConfiguration) Reset()         { *m = IPConfiguration{} }
+func (m *IPConfiguration) String() string { return proto.CompactTextString(m) }
+func (*IPConfiguration) ProtoMessage()    {}
+func (*IPConfiguration) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cd059abf8f713b80, []int{9}
+}
+func (m *IPConfiguration) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *IPConfiguration) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_IPConfiguration.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *IPConfiguration) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IPConfiguration.Merge(m, src)
+}
+func (m *IPConfiguration) XXX_Size() int {
+	return m.Size()
+}
+func (m *IPConfiguration) XXX_DiscardUnknown() {
+	xxx_messageInfo_IPConfiguration.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IPConfiguration proto.InternalMessageInfo
+
+func (m *IPConfiguration) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *IPConfiguration) GetGateway() string {
+	if m != nil {
+		return m.Gateway
+	}
+	return ""
+}
+
+type InfraAddReply struct {
+	Successful           bool     `protobuf:"varint,1,opt,name=successful,proto3" json:"successful,omitempty"`
+	ErrorMessage         string   `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	HostInterfaceName    string   `protobuf:"bytes,3,opt,name=host_interface_name,json=hostInterfaceName,proto3" json:"host_interface_name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *InfraAddReply) Reset()         { *m = InfraAddReply{} }
+func (m *InfraAddReply) String() string { return proto.CompactTextString(m) }
+func (*InfraAddReply) ProtoMessage()    {}
+func (*InfraAddReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cd059abf8f713b80, []int{10}
+}
+func (m *InfraAddReply) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *InfraAddReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_InfraAddReply.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *InfraAddReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InfraAddReply.Merge(m, src)
+}
+func (m *InfraAddReply) XXX_Size() int {
+	return m.Size()
+}
+func (m *InfraAddReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_InfraAddReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_InfraAddReply proto.InternalMessageInfo
+
+func (m *InfraAddReply) GetSuccessful() bool {
+	if m != nil {
+		return m.Successful
+	}
+	return false
+}
+
+func (m *InfraAddReply) GetErrorMessage() string {
+	if m != nil {
+		return m.ErrorMessage
+	}
+	return ""
+}
+
+func (m *InfraAddReply) GetHostInterfaceName() string {
+	if m != nil {
+		return m.HostInterfaceName
+	}
+	return ""
+}
+
 func init() {
+	proto.RegisterType((*Reply)(nil), "infra.Reply")
 	proto.RegisterType((*NatEndpoint)(nil), "infra.NatEndpoint")
 	proto.RegisterType((*NatEndpointTuple)(nil), "infra.NatEndpointTuple")
 	proto.RegisterType((*NatTranslation)(nil), "infra.NatTranslation")
-	proto.RegisterType((*Reply)(nil), "infra.Reply")
 	proto.RegisterType((*SetSnatAddressRequest)(nil), "infra.SetSnatAddressRequest")
 	proto.RegisterType((*AddDelSnatPrefixRequest)(nil), "infra.AddDelSnatPrefixRequest")
 	proto.RegisterType((*CreateNetworkRequest)(nil), "infra.CreateNetworkRequest")
 	proto.RegisterType((*DeleteNetworkRequest)(nil), "infra.DeleteNetworkRequest")
 	proto.RegisterType((*SetupHostInterfaceRequest)(nil), "infra.SetupHostInterfaceRequest")
+	proto.RegisterType((*IPConfiguration)(nil), "infra.IPConfiguration")
+	proto.RegisterType((*InfraAddReply)(nil), "infra.InfraAddReply")
 }
 
 func init() { proto.RegisterFile("infra.proto", fileDescriptor_cd059abf8f713b80) }
 
 var fileDescriptor_cd059abf8f713b80 = []byte{
-	// 1017 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x96, 0xdd, 0x4e, 0x1b, 0x47,
-	0x14, 0xc7, 0x63, 0x02, 0x8e, 0x39, 0x86, 0x40, 0x27, 0x26, 0x06, 0x42, 0x2d, 0x6b, 0x7b, 0x43,
-	0x6f, 0xac, 0x86, 0x44, 0x91, 0xd2, 0x2a, 0x89, 0x16, 0x4c, 0x13, 0x4b, 0x80, 0xe8, 0x42, 0x9b,
-	0xaa, 0x37, 0xd6, 0xb0, 0x73, 0x4c, 0x46, 0x8c, 0x77, 0xb7, 0x33, 0x63, 0x1a, 0x1e, 0xa0, 0xef,
-	0xd0, 0xeb, 0xde, 0xf5, 0x4d, 0x7a, 0xd9, 0x47, 0xa8, 0xe8, 0x75, 0xdf, 0xa1, 0xda, 0x9d, 0xd9,
-	0xc5, 0x8b, 0x3d, 0x40, 0xd4, 0x2b, 0x76, 0xcf, 0x9c, 0xf3, 0x3b, 0xff, 0x39, 0x1f, 0x8b, 0xa1,
-	0xce, 0xa3, 0x81, 0xa4, 0x9d, 0x44, 0xc6, 0x3a, 0x26, 0x73, 0xd9, 0xcb, 0xfa, 0x72, 0x18, 0xf1,
-	0x13, 0x1a, 0x9e, 0x61, 0xc4, 0xcc, 0xc1, 0x3a, 0x19, 0xa0, 0xe0, 0x1f, 0x4b, 0x36, 0xef, 0x35,
-	0xd4, 0x0f, 0xa8, 0xde, 0x8d, 0x58, 0x12, 0xf3, 0x48, 0x93, 0x27, 0x30, 0xcf, 0x93, 0xf3, 0xe7,
-	0x7d, 0xca, 0x98, 0x5c, 0xad, 0xb4, 0x2b, 0x9b, 0xf3, 0x41, 0x2d, 0x35, 0xf8, 0x8c, 0x49, 0x42,
-	0x60, 0x36, 0x89, 0xa5, 0x5e, 0x9d, 0x69, 0x57, 0x36, 0x17, 0x83, 0xec, 0xd9, 0xfb, 0x00, 0xcb,
-	0x63, 0xf1, 0xc7, 0xa3, 0x44, 0x20, 0xf9, 0x12, 0xaa, 0x4c, 0xe9, 0x3e, 0x26, 0x19, 0xa1, 0xbe,
-	0x45, 0x3a, 0x46, 0xde, 0x98, 0x63, 0x30, 0xc7, 0x94, 0xde, 0x4d, 0x52, 0x57, 0x25, 0xc3, 0xd4,
-	0x75, 0xc6, 0xed, 0xaa, 0x64, 0xb8, 0x9b, 0x78, 0x7f, 0x54, 0xe0, 0xe1, 0x01, 0xd5, 0xc7, 0x92,
-	0x46, 0x4a, 0x50, 0xcd, 0xe3, 0x88, 0x74, 0xa0, 0x86, 0xd6, 0xeb, 0x86, 0xf8, 0xc2, 0x87, 0x34,
-	0x60, 0x2e, 0xbb, 0xf5, 0xea, 0xfd, 0xec, 0x66, 0xe6, 0x85, 0x6c, 0x00, 0x70, 0xd5, 0x97, 0x48,
-	0x45, 0x9f, 0x27, 0xab, 0xb3, 0xed, 0xca, 0x66, 0x2d, 0xa8, 0x71, 0x15, 0x20, 0x15, 0xbd, 0x84,
-	0x3c, 0x83, 0x9a, 0xad, 0x98, 0x5a, 0xad, 0xb6, 0xef, 0x6f, 0xd6, 0xb7, 0x9a, 0x93, 0x39, 0xb2,
-	0x7b, 0x07, 0x85, 0xa3, 0xb7, 0x07, 0x73, 0x01, 0x26, 0xe2, 0x82, 0xb4, 0x00, 0xd4, 0x28, 0x0c,
-	0x51, 0xa9, 0xc1, 0x48, 0x64, 0xe5, 0xa8, 0x05, 0x63, 0x16, 0xf2, 0x05, 0x2c, 0xa2, 0x94, 0xb1,
-	0xec, 0x0f, 0x51, 0x29, 0x7a, 0x8a, 0xd9, 0x35, 0xe6, 0x83, 0x85, 0xcc, 0xb8, 0x6f, 0x6c, 0xde,
-	0x77, 0xb0, 0x72, 0x84, 0xfa, 0x28, 0xa2, 0x3a, 0x6d, 0x03, 0x2a, 0x15, 0xe0, 0xcf, 0x23, 0x54,
-	0x59, 0xb7, 0x54, 0x44, 0x75, 0x3f, 0xed, 0x50, 0xde, 0xad, 0xd4, 0xd0, 0x4b, 0xce, 0x9f, 0x8f,
-	0x1f, 0xbe, 0xb0, 0xd8, 0xfc, 0xf0, 0x85, 0xf7, 0x0e, 0x9a, 0x3e, 0x63, 0x5d, 0x14, 0x29, 0xf5,
-	0x50, 0xe2, 0x80, 0x7f, 0xcc, 0xa1, 0x2b, 0x50, 0xe5, 0x2a, 0x1d, 0x00, 0x2b, 0x77, 0x8e, 0x2b,
-	0x9f, 0x31, 0xf2, 0x18, 0xaa, 0x49, 0xe6, 0x67, 0x59, 0xf6, 0xcd, 0xfb, 0xb5, 0x02, 0x8d, 0x1d,
-	0x89, 0x54, 0xe3, 0x01, 0xea, 0x5f, 0x62, 0x79, 0x96, 0x73, 0xbe, 0x82, 0x3a, 0x65, 0xac, 0x2f,
-	0xcd, 0xab, 0x1d, 0x85, 0xa5, 0x4e, 0x18, 0xf1, 0x8e, 0xcf, 0x98, 0xf5, 0x0a, 0x80, 0x16, 0xcf,
-	0xa4, 0x0d, 0x0b, 0x1f, 0x62, 0xa5, 0xfb, 0x7c, 0xd0, 0x8f, 0xe8, 0x30, 0xaf, 0x05, 0xa4, 0xb6,
-	0xde, 0xe0, 0x80, 0x0e, 0x91, 0xac, 0x41, 0x6d, 0x48, 0x43, 0x33, 0x9d, 0xa6, 0x87, 0x0f, 0x86,
-	0x34, 0x4c, 0xab, 0xe2, 0xfd, 0x5e, 0x81, 0x46, 0x17, 0x05, 0x4e, 0xd3, 0xc1, 0x50, 0x4c, 0xd5,
-	0xd1, 0x45, 0x51, 0xe8, 0x60, 0xc5, 0xf3, 0xff, 0xd2, 0x51, 0xde, 0xa0, 0xd9, 0xf2, 0x06, 0x79,
-	0x02, 0xd6, 0x8e, 0x50, 0x8f, 0x92, 0x77, 0x29, 0x2a, 0xd2, 0x28, 0x07, 0x34, 0xc4, 0x3c, 0x6d,
-	0x13, 0x1e, 0xe4, 0x19, 0x4d, 0x2f, 0xab, 0xdc, 0x64, 0x2b, 0x21, 0x67, 0xae, 0x2d, 0xa5, 0x5b,
-	0xca, 0xd6, 0xbf, 0x4b, 0x00, 0xbd, 0x74, 0x54, 0xfd, 0x53, 0x8c, 0x34, 0x79, 0x05, 0x8b, 0xa5,
-	0x46, 0x91, 0x27, 0x76, 0x90, 0xa7, 0xb5, 0x6f, 0x7d, 0xf1, 0xaa, 0x53, 0x89, 0xb8, 0xf0, 0xee,
-	0xa5, 0xe1, 0xa5, 0xfa, 0x16, 0xe1, 0xd3, 0xaa, 0x6e, 0xc3, 0xb3, 0x02, 0x9b, 0xf0, 0x6f, 0x81,
-	0x4c, 0x5e, 0x9d, 0xb4, 0x2d, 0xc3, 0x59, 0x95, 0xf5, 0x05, 0xeb, 0x91, 0x73, 0xbe, 0x86, 0xcf,
-	0xca, 0x5f, 0x81, 0x74, 0x38, 0x57, 0xae, 0x56, 0x72, 0xec, 0x64, 0x22, 0xf6, 0x35, 0x3c, 0x2c,
-	0x2f, 0x12, 0xd9, 0xb8, 0xca, 0x3f, 0xb9, 0x5f, 0x13, 0xf1, 0xdb, 0xb0, 0x7c, 0x7d, 0x6b, 0x48,
-	0xcb, 0xfa, 0x38, 0xd6, 0x69, 0x82, 0xf1, 0x0a, 0x1a, 0x65, 0x95, 0xa6, 0x7c, 0x77, 0xbd, 0xc2,
-	0x1b, 0x20, 0x7e, 0xa8, 0xf9, 0x39, 0x1e, 0xc6, 0x82, 0x87, 0x17, 0xdf, 0x27, 0x8c, 0x6a, 0x24,
-	0x6b, 0x9d, 0xec, 0xd3, 0xde, 0x99, 0x3c, 0xba, 0x0d, 0x10, 0xe0, 0x30, 0x3e, 0x9f, 0x0e, 0x30,
-	0x47, 0x13, 0x80, 0xa7, 0x50, 0x37, 0xe8, 0xde, 0xe1, 0x11, 0x6a, 0x42, 0x6c, 0x64, 0xf6, 0xe6,
-	0xc8, 0xf9, 0x0d, 0x2c, 0x8f, 0x85, 0x74, 0x51, 0x68, 0x4a, 0x9a, 0xe3, 0x71, 0x99, 0xc9, 0x11,
-	0xfc, 0x14, 0xea, 0x46, 0xc9, 0x94, 0x7c, 0x0e, 0x89, 0x3e, 0x3c, 0x32, 0x30, 0x7b, 0x1d, 0x19,
-	0x0f, 0xb8, 0x40, 0xb2, 0x5e, 0xbe, 0xa4, 0xb1, 0x3a, 0xb2, 0xfa, 0xf0, 0xc8, 0xc0, 0xef, 0x80,
-	0x70, 0xa8, 0x78, 0x03, 0xc4, 0xc0, 0xd3, 0xb9, 0x2e, 0xfe, 0xc3, 0xe6, 0x95, 0x1e, 0x37, 0xba,
-	0x5b, 0x65, 0xd0, 0xb7, 0x02, 0x1c, 0x0a, 0xba, 0x79, 0x1d, 0xf6, 0xe2, 0x90, 0x8a, 0x82, 0xf0,
-	0xb9, 0x25, 0xbc, 0x8f, 0xe5, 0x99, 0x88, 0x29, 0xbb, 0x45, 0x46, 0x37, 0x2f, 0xc5, 0xdd, 0x28,
-	0x77, 0xa9, 0xc6, 0x3e, 0x6a, 0xda, 0xa5, 0x9a, 0x96, 0x2e, 0x93, 0x1a, 0x19, 0x75, 0xce, 0x41,
-	0xa9, 0x1a, 0x37, 0x02, 0x1c, 0x0a, 0x76, 0xa0, 0x61, 0xd0, 0x47, 0x28, 0xcf, 0x79, 0x88, 0x7e,
-	0x18, 0xc6, 0xa3, 0xf4, 0x37, 0x8f, 0x45, 0x94, 0xcd, 0x0e, 0x15, 0x3b, 0xd0, 0x30, 0xf8, 0x3b,
-	0x41, 0x1c, 0x4a, 0x5e, 0xc2, 0x92, 0xc1, 0xa7, 0x9f, 0x77, 0x95, 0xa4, 0x1f, 0xc2, 0xc7, 0x36,
-	0xbe, 0xb0, 0x38, 0xf2, 0xbf, 0x84, 0x25, 0x03, 0xbd, 0x21, 0xf4, 0xb6, 0xc5, 0x0d, 0xe2, 0x91,
-	0xc6, 0x62, 0x91, 0xb2, 0xb7, 0xdb, 0x76, 0x6f, 0x4a, 0x88, 0x23, 0xcb, 0x3e, 0xac, 0x19, 0xd8,
-	0x0f, 0x3f, 0xee, 0xf9, 0x07, 0xc7, 0xa3, 0x28, 0xc2, 0xab, 0x99, 0x69, 0x5b, 0xc0, 0x94, 0x33,
-	0x87, 0x82, 0x7d, 0x58, 0x33, 0x89, 0x3e, 0x11, 0xe7, 0x50, 0xd7, 0x83, 0xa6, 0x49, 0xf4, 0x9e,
-	0x4b, 0x3c, 0x1d, 0x51, 0x59, 0x8c, 0x2d, 0x69, 0xe5, 0xf3, 0x7c, 0xfd, 0xc4, 0xa1, 0xac, 0x07,
-	0x4d, 0x93, 0xe4, 0x13, 0x50, 0x0e, 0x55, 0xbb, 0xb0, 0x62, 0x92, 0xbc, 0x15, 0xf1, 0x09, 0x15,
-	0xdb, 0x6f, 0x0f, 0x77, 0xe2, 0x68, 0xc0, 0x4f, 0xc9, 0x86, 0x05, 0x5d, 0xb3, 0x4f, 0x57, 0xb4,
-	0xdd, 0xfc, 0xf3, 0xb2, 0x55, 0xf9, 0xeb, 0xb2, 0x55, 0xf9, 0xfb, 0xb2, 0x55, 0xf9, 0xed, 0x9f,
-	0xd6, 0xbd, 0x9f, 0xcc, 0x2f, 0xdc, 0x93, 0x6a, 0xf6, 0xe7, 0xd9, 0x7f, 0x01, 0x00, 0x00, 0xff,
-	0xff, 0x02, 0x2a, 0x97, 0x47, 0x27, 0x0c, 0x00, 0x00,
+	// 1112 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0x5d, 0x4f, 0x1b, 0x47,
+	0x17, 0xce, 0xf2, 0x61, 0xcc, 0x31, 0x06, 0x32, 0x18, 0x6c, 0x3e, 0x5e, 0xcb, 0xda, 0x57, 0x95,
+	0xe8, 0x8d, 0xa5, 0x90, 0x28, 0x52, 0x9a, 0x26, 0x91, 0xc1, 0x34, 0xb1, 0x04, 0x88, 0x2e, 0xb4,
+	0xa9, 0x7a, 0x63, 0x0d, 0xbb, 0xc7, 0x30, 0x62, 0xbd, 0xbb, 0x9d, 0x19, 0x93, 0x70, 0xdf, 0xeb,
+	0xde, 0xb6, 0x7f, 0x21, 0xff, 0xa4, 0x77, 0xed, 0x55, 0xaf, 0x2b, 0xfa, 0x47, 0xaa, 0x9d, 0x99,
+	0x35, 0x5e, 0xaf, 0x17, 0x88, 0xd4, 0x2b, 0x98, 0xf3, 0xf1, 0x9c, 0xe7, 0x3c, 0x73, 0xe6, 0x78,
+	0xa1, 0xc4, 0x82, 0x1e, 0xa7, 0xcd, 0x88, 0x87, 0x32, 0x24, 0xb3, 0xea, 0xb0, 0x41, 0x7a, 0xe8,
+	0xb3, 0x8f, 0x67, 0xd4, 0xbd, 0xc4, 0xc0, 0xd3, 0x2e, 0xfb, 0x00, 0x66, 0x1d, 0x8c, 0xfc, 0x6b,
+	0x52, 0x07, 0x10, 0x03, 0xd7, 0x45, 0x21, 0x7a, 0x03, 0xbf, 0x66, 0x35, 0xac, 0xed, 0xa2, 0x33,
+	0x62, 0x21, 0xff, 0x87, 0x32, 0x72, 0x1e, 0xf2, 0x6e, 0x1f, 0x85, 0xa0, 0xe7, 0x58, 0x9b, 0x6a,
+	0x58, 0xdb, 0xf3, 0xce, 0x82, 0x32, 0x1e, 0x6a, 0x9b, 0xfd, 0x1a, 0x4a, 0x47, 0x54, 0xee, 0x07,
+	0x5e, 0x14, 0xb2, 0x40, 0x92, 0x4d, 0x98, 0x67, 0xd1, 0xd5, 0xb3, 0x2e, 0xf5, 0x3c, 0xae, 0x20,
+	0xe7, 0x9d, 0x62, 0x6c, 0x68, 0x79, 0x1e, 0x27, 0x04, 0x66, 0xa2, 0x90, 0x4b, 0x85, 0x53, 0x76,
+	0xd4, 0xff, 0xf6, 0x05, 0x2c, 0x8f, 0xe4, 0x9f, 0x0e, 0x22, 0x1f, 0xc9, 0x97, 0x50, 0xf0, 0x84,
+	0xec, 0x62, 0xa4, 0x10, 0x4a, 0x3b, 0xa4, 0xa9, 0x5b, 0x1b, 0x09, 0x74, 0x66, 0x3d, 0x21, 0xf7,
+	0xa3, 0x38, 0x54, 0x70, 0x37, 0x0e, 0x9d, 0xca, 0x0f, 0x15, 0xdc, 0xdd, 0x8f, 0xec, 0x4f, 0x16,
+	0x2c, 0x1e, 0x51, 0x79, 0xca, 0x69, 0x20, 0x7c, 0x2a, 0x59, 0x18, 0x90, 0x26, 0x14, 0xd1, 0x44,
+	0xdd, 0x91, 0x3f, 0x8c, 0x21, 0x15, 0x98, 0x55, 0x1a, 0xd6, 0xa6, 0x55, 0x67, 0xfa, 0x40, 0xb6,
+	0x00, 0x98, 0xe8, 0x72, 0xa4, 0x7e, 0x97, 0x45, 0xb5, 0x19, 0xa5, 0x63, 0x91, 0x09, 0x07, 0xa9,
+	0xdf, 0x89, 0xc8, 0x53, 0x28, 0x1a, 0xfd, 0x45, 0xad, 0xd0, 0x98, 0xde, 0x2e, 0xed, 0x54, 0xb3,
+	0x35, 0x54, 0xdf, 0xce, 0x30, 0xd0, 0xfe, 0x16, 0x56, 0x4f, 0x50, 0x9e, 0x04, 0x54, 0xc6, 0xc2,
+	0xa1, 0x10, 0x0e, 0xfe, 0x34, 0x40, 0xa1, 0xf4, 0x15, 0x01, 0x95, 0xdd, 0x58, 0xd3, 0x44, 0xdf,
+	0xd8, 0xd0, 0x89, 0xae, 0x9e, 0x8d, 0x3a, 0x9f, 0x9b, 0xcb, 0x4a, 0x9c, 0xcf, 0xed, 0x77, 0x50,
+	0x6d, 0x79, 0x5e, 0x1b, 0xfd, 0x18, 0xf5, 0x98, 0x63, 0x8f, 0x7d, 0x4c, 0x40, 0x57, 0xa1, 0xc0,
+	0x44, 0x7c, 0x65, 0x66, 0x08, 0x66, 0x99, 0x68, 0x79, 0x1e, 0x59, 0x83, 0x42, 0xa4, 0xe2, 0x0c,
+	0x96, 0x39, 0xd9, 0x7f, 0x58, 0x50, 0xd9, 0xe3, 0x48, 0x25, 0x1e, 0xa1, 0xfc, 0x10, 0xf2, 0xcb,
+	0x04, 0xe7, 0x25, 0x94, 0xdd, 0x30, 0x90, 0x94, 0x05, 0xc8, 0xbb, 0x2c, 0x12, 0x35, 0x4b, 0xf5,
+	0xbb, 0x66, 0xfa, 0xed, 0x1c, 0xef, 0x85, 0x41, 0x8f, 0x9d, 0x0f, 0xb8, 0x52, 0xdf, 0x59, 0x18,
+	0x06, 0x77, 0x22, 0x41, 0x5e, 0xc1, 0xa6, 0x87, 0x82, 0x71, 0xf4, 0xba, 0x17, 0xa1, 0x90, 0x5d,
+	0x16, 0x48, 0xe4, 0x3d, 0xea, 0x62, 0x37, 0xa0, 0xfd, 0x64, 0xf6, 0x6a, 0x26, 0xe4, 0x5d, 0x28,
+	0x64, 0x27, 0x09, 0x38, 0xa2, 0x7d, 0x24, 0x0d, 0x58, 0xd0, 0x69, 0x3d, 0x1d, 0xaf, 0x6f, 0x08,
+	0x62, 0x5b, 0xa7, 0xa7, 0x22, 0xd6, 0xa1, 0xd8, 0xa7, 0xae, 0x9e, 0xcc, 0x19, 0xe5, 0x9d, 0xeb,
+	0x53, 0x37, 0xd6, 0xd7, 0xfe, 0xd5, 0x82, 0x4a, 0x1b, 0x7d, 0xcc, 0x74, 0xf4, 0x05, 0x2c, 0x8e,
+	0xf1, 0xd0, 0x9a, 0x97, 0xd9, 0x9d, 0xc5, 0xa7, 0xee, 0x2c, 0x3e, 0x9d, 0x2a, 0x9e, 0x7e, 0x32,
+	0x33, 0xe9, 0x27, 0x63, 0xfb, 0xb0, 0x7e, 0x82, 0x72, 0x10, 0xa5, 0x1a, 0x4e, 0xd8, 0x55, 0x61,
+	0x2e, 0xa9, 0xa8, 0x69, 0x15, 0x98, 0xae, 0x96, 0x82, 0x9c, 0x1a, 0x7b, 0x85, 0xf9, 0x54, 0xec,
+	0x7d, 0x58, 0x1a, 0xbb, 0x24, 0x52, 0x83, 0x39, 0xaa, 0x47, 0xd0, 0xd4, 0x48, 0x8e, 0xb1, 0xe7,
+	0x9c, 0x4a, 0xfc, 0x40, 0xaf, 0x4d, 0x89, 0xe4, 0x68, 0xff, 0x6c, 0x41, 0xb9, 0x13, 0x5f, 0x79,
+	0xcb, 0xf3, 0xfe, 0xbb, 0x55, 0x43, 0x9a, 0xb0, 0x32, 0x69, 0x32, 0x74, 0x0f, 0x8f, 0x2f, 0xc6,
+	0x47, 0x62, 0xe7, 0x2f, 0x0b, 0x8a, 0x8a, 0xc6, 0x5e, 0xc0, 0x48, 0x1b, 0xca, 0xa9, 0x99, 0x25,
+	0x9b, 0x66, 0x2a, 0x27, 0x4d, 0xf2, 0x46, 0x25, 0x19, 0xd9, 0xd1, 0x2e, 0xec, 0x47, 0xe4, 0x6b,
+	0x28, 0xa7, 0xe6, 0x64, 0x88, 0x32, 0x69, 0x7a, 0x36, 0x16, 0x8c, 0x33, 0xc9, 0xfe, 0x06, 0x48,
+	0xf6, 0x32, 0x49, 0xc3, 0x44, 0xe5, 0xde, 0xf3, 0x38, 0xce, 0xce, 0x2f, 0x53, 0x46, 0xdf, 0x13,
+	0xe4, 0x57, 0xcc, 0x45, 0x41, 0xbe, 0x82, 0xc7, 0xe9, 0xd5, 0x16, 0xbf, 0xdf, 0xd5, 0xdb, 0x3d,
+	0x33, 0xe2, 0xc9, 0xb0, 0x7a, 0x0d, 0x8b, 0xe9, 0x5d, 0x43, 0xb6, 0x6e, 0x19, 0x65, 0x57, 0x50,
+	0x26, 0x7f, 0x17, 0x96, 0xc7, 0x17, 0x0b, 0xa9, 0x9b, 0x98, 0x9c, 0x8d, 0x93, 0xc1, 0x78, 0x05,
+	0x95, 0x34, 0x4b, 0xad, 0xe7, 0x03, 0x5b, 0xd8, 0xf9, 0xb4, 0x00, 0x25, 0x25, 0xc8, 0x71, 0xe8,
+	0x33, 0xf7, 0x9a, 0xbc, 0x01, 0xd2, 0x72, 0x25, 0xbb, 0x42, 0x7d, 0xfe, 0x2e, 0xf2, 0xa8, 0x44,
+	0xb2, 0xde, 0x54, 0xbf, 0x86, 0xcd, 0xac, 0x2b, 0xc3, 0x67, 0x0c, 0xc0, 0xc1, 0x7e, 0x78, 0x35,
+	0x19, 0x40, 0xbb, 0x32, 0x00, 0x4f, 0xa0, 0xa4, 0xa1, 0x3b, 0xc7, 0x27, 0x28, 0x09, 0x31, 0x99,
+	0xea, 0x94, 0x53, 0xf3, 0x25, 0x2c, 0x8f, 0xa4, 0xb4, 0xd1, 0x97, 0x94, 0x54, 0x47, 0xf3, 0x94,
+	0x29, 0x27, 0xf9, 0x09, 0x94, 0x34, 0x93, 0x09, 0xf5, 0x72, 0x28, 0xb6, 0x60, 0x45, 0x83, 0x99,
+	0x76, 0x78, 0xd8, 0x63, 0x3e, 0x92, 0x8d, 0x74, 0x93, 0xda, 0x9a, 0x53, 0xb5, 0x05, 0x2b, 0x1a,
+	0xfc, 0x01, 0x10, 0x39, 0x2c, 0xde, 0x00, 0xd1, 0xe0, 0xf1, 0xe4, 0x0f, 0x3f, 0x23, 0x12, 0xa5,
+	0x47, 0x8d, 0xf9, 0x57, 0xa5, 0xa1, 0xef, 0x05, 0xc8, 0x61, 0xd0, 0x4e, 0x74, 0x38, 0x08, 0x5d,
+	0xea, 0x0f, 0x11, 0xfe, 0x67, 0x10, 0xde, 0x87, 0xfc, 0xd2, 0x0f, 0xa9, 0x77, 0x0f, 0x8d, 0x76,
+	0x22, 0xc5, 0xc3, 0x50, 0x1e, 0xa2, 0xc6, 0x21, 0x4a, 0xda, 0xa6, 0x92, 0xa6, 0x9a, 0x89, 0x8d,
+	0x1e, 0xcd, 0x9d, 0x83, 0x94, 0x1a, 0x77, 0x02, 0xe4, 0x30, 0xd8, 0x83, 0x8a, 0x86, 0x36, 0xbb,
+	0xa5, 0xe5, 0xba, 0xe1, 0x20, 0xfe, 0xb0, 0x33, 0x10, 0x69, 0x73, 0x0e, 0x8b, 0x3d, 0xa8, 0x68,
+	0xf8, 0x07, 0x81, 0xe4, 0x30, 0x79, 0x01, 0x4b, 0x1a, 0x3e, 0x5e, 0xe6, 0x22, 0x8a, 0x57, 0xe5,
+	0x9a, 0xc9, 0x1f, 0x5a, 0x72, 0xea, 0xbf, 0x80, 0x25, 0x0d, 0x7a, 0x47, 0xea, 0x7d, 0x0f, 0xd7,
+	0x09, 0x07, 0x12, 0x87, 0x0f, 0x49, 0x9d, 0xee, 0x7b, 0x7b, 0x13, 0x52, 0x72, 0xaa, 0x1c, 0xc2,
+	0xba, 0x06, 0xfb, 0xfe, 0x87, 0x83, 0xd6, 0xd1, 0xe9, 0x20, 0x08, 0xf0, 0x76, 0x66, 0x1a, 0x06,
+	0x60, 0x82, 0x2f, 0x87, 0xc1, 0x21, 0xac, 0xeb, 0x42, 0x9f, 0x09, 0x97, 0xc3, 0xae, 0x03, 0x55,
+	0x5d, 0xe8, 0x3d, 0xe3, 0x78, 0x3e, 0xa0, 0x7c, 0x38, 0xb6, 0xa4, 0x9e, 0xcc, 0xf3, 0xb8, 0x27,
+	0x87, 0x59, 0x07, 0xaa, 0xba, 0xc8, 0x67, 0x40, 0xe5, 0xb0, 0xda, 0x87, 0x55, 0x5d, 0xe4, 0xad,
+	0x1f, 0x9e, 0x51, 0x7f, 0xf7, 0xad, 0xf9, 0x52, 0x21, 0x5b, 0x06, 0x68, 0xcc, 0x3e, 0x99, 0xd1,
+	0x6e, 0xf5, 0xf7, 0x9b, 0xba, 0xf5, 0xe7, 0x4d, 0xdd, 0xfa, 0xfb, 0xa6, 0x6e, 0xfd, 0xf6, 0x4f,
+	0xfd, 0xd1, 0x8f, 0xfa, 0x33, 0xfe, 0xac, 0xa0, 0xfe, 0x3c, 0xfd, 0x37, 0x00, 0x00, 0xff, 0xff,
+	0x2a, 0xaf, 0xc4, 0x95, 0x48, 0x0d, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -659,17 +793,334 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// InfraAgentClient is the client API for InfraAgent service.
+// InfraCniClient is the client API for InfraCni service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type InfraAgentClient interface {
-	CreateNetwork(ctx context.Context, in *CreateNetworkRequest, opts ...grpc.CallOption) (*AddReply, error)
-	DeleteNetwork(ctx context.Context, in *DeleteNetworkRequest, opts ...grpc.CallOption) (*DelReply, error)
+type InfraCniClient interface {
+	CreateNetwork(ctx context.Context, in *CreateNetworkRequest, opts ...grpc.CallOption) (*InfraAddReply, error)
+	DeleteNetwork(ctx context.Context, in *DeleteNetworkRequest, opts ...grpc.CallOption) (*Reply, error)
 	SetupHostInterface(ctx context.Context, in *SetupHostInterfaceRequest, opts ...grpc.CallOption) (*Reply, error)
+}
+
+type infraCniClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewInfraCniClient(cc *grpc.ClientConn) InfraCniClient {
+	return &infraCniClient{cc}
+}
+
+func (c *infraCniClient) CreateNetwork(ctx context.Context, in *CreateNetworkRequest, opts ...grpc.CallOption) (*InfraAddReply, error) {
+	out := new(InfraAddReply)
+	err := c.cc.Invoke(ctx, "/infra.InfraCni/CreateNetwork", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infraCniClient) DeleteNetwork(ctx context.Context, in *DeleteNetworkRequest, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, "/infra.InfraCni/DeleteNetwork", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infraCniClient) SetupHostInterface(ctx context.Context, in *SetupHostInterfaceRequest, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, "/infra.InfraCni/SetupHostInterface", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// InfraCniServer is the server API for InfraCni service.
+type InfraCniServer interface {
+	CreateNetwork(context.Context, *CreateNetworkRequest) (*InfraAddReply, error)
+	DeleteNetwork(context.Context, *DeleteNetworkRequest) (*Reply, error)
+	SetupHostInterface(context.Context, *SetupHostInterfaceRequest) (*Reply, error)
+}
+
+// UnimplementedInfraCniServer can be embedded to have forward compatible implementations.
+type UnimplementedInfraCniServer struct {
+}
+
+func (*UnimplementedInfraCniServer) CreateNetwork(ctx context.Context, req *CreateNetworkRequest) (*InfraAddReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateNetwork not implemented")
+}
+func (*UnimplementedInfraCniServer) DeleteNetwork(ctx context.Context, req *DeleteNetworkRequest) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteNetwork not implemented")
+}
+func (*UnimplementedInfraCniServer) SetupHostInterface(ctx context.Context, req *SetupHostInterfaceRequest) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetupHostInterface not implemented")
+}
+
+func RegisterInfraCniServer(s *grpc.Server, srv InfraCniServer) {
+	s.RegisterService(&_InfraCni_serviceDesc, srv)
+}
+
+func _InfraCni_CreateNetwork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNetworkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfraCniServer).CreateNetwork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infra.InfraCni/CreateNetwork",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfraCniServer).CreateNetwork(ctx, req.(*CreateNetworkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InfraCni_DeleteNetwork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteNetworkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfraCniServer).DeleteNetwork(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infra.InfraCni/DeleteNetwork",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfraCniServer).DeleteNetwork(ctx, req.(*DeleteNetworkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InfraCni_SetupHostInterface_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetupHostInterfaceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfraCniServer).SetupHostInterface(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infra.InfraCni/SetupHostInterface",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfraCniServer).SetupHostInterface(ctx, req.(*SetupHostInterfaceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _InfraCni_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "infra.InfraCni",
+	HandlerType: (*InfraCniServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateNetwork",
+			Handler:    _InfraCni_CreateNetwork_Handler,
+		},
+		{
+			MethodName: "DeleteNetwork",
+			Handler:    _InfraCni_DeleteNetwork_Handler,
+		},
+		{
+			MethodName: "SetupHostInterface",
+			Handler:    _InfraCni_SetupHostInterface_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "infra.proto",
+}
+
+// InfraServicesClient is the client API for InfraServices service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type InfraServicesClient interface {
 	NatTranslationAdd(ctx context.Context, in *NatTranslation, opts ...grpc.CallOption) (*Reply, error)
 	SetSnatAddress(ctx context.Context, in *SetSnatAddressRequest, opts ...grpc.CallOption) (*Reply, error)
 	AddDelSnatPrefix(ctx context.Context, in *AddDelSnatPrefixRequest, opts ...grpc.CallOption) (*Reply, error)
 	NatTranslationDelete(ctx context.Context, in *NatTranslation, opts ...grpc.CallOption) (*Reply, error)
+}
+
+type infraServicesClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewInfraServicesClient(cc *grpc.ClientConn) InfraServicesClient {
+	return &infraServicesClient{cc}
+}
+
+func (c *infraServicesClient) NatTranslationAdd(ctx context.Context, in *NatTranslation, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, "/infra.InfraServices/NatTranslationAdd", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infraServicesClient) SetSnatAddress(ctx context.Context, in *SetSnatAddressRequest, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, "/infra.InfraServices/SetSnatAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infraServicesClient) AddDelSnatPrefix(ctx context.Context, in *AddDelSnatPrefixRequest, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, "/infra.InfraServices/AddDelSnatPrefix", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infraServicesClient) NatTranslationDelete(ctx context.Context, in *NatTranslation, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, "/infra.InfraServices/NatTranslationDelete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// InfraServicesServer is the server API for InfraServices service.
+type InfraServicesServer interface {
+	NatTranslationAdd(context.Context, *NatTranslation) (*Reply, error)
+	SetSnatAddress(context.Context, *SetSnatAddressRequest) (*Reply, error)
+	AddDelSnatPrefix(context.Context, *AddDelSnatPrefixRequest) (*Reply, error)
+	NatTranslationDelete(context.Context, *NatTranslation) (*Reply, error)
+}
+
+// UnimplementedInfraServicesServer can be embedded to have forward compatible implementations.
+type UnimplementedInfraServicesServer struct {
+}
+
+func (*UnimplementedInfraServicesServer) NatTranslationAdd(ctx context.Context, req *NatTranslation) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NatTranslationAdd not implemented")
+}
+func (*UnimplementedInfraServicesServer) SetSnatAddress(ctx context.Context, req *SetSnatAddressRequest) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSnatAddress not implemented")
+}
+func (*UnimplementedInfraServicesServer) AddDelSnatPrefix(ctx context.Context, req *AddDelSnatPrefixRequest) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddDelSnatPrefix not implemented")
+}
+func (*UnimplementedInfraServicesServer) NatTranslationDelete(ctx context.Context, req *NatTranslation) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NatTranslationDelete not implemented")
+}
+
+func RegisterInfraServicesServer(s *grpc.Server, srv InfraServicesServer) {
+	s.RegisterService(&_InfraServices_serviceDesc, srv)
+}
+
+func _InfraServices_NatTranslationAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NatTranslation)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfraServicesServer).NatTranslationAdd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infra.InfraServices/NatTranslationAdd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfraServicesServer).NatTranslationAdd(ctx, req.(*NatTranslation))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InfraServices_SetSnatAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSnatAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfraServicesServer).SetSnatAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infra.InfraServices/SetSnatAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfraServicesServer).SetSnatAddress(ctx, req.(*SetSnatAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InfraServices_AddDelSnatPrefix_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddDelSnatPrefixRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfraServicesServer).AddDelSnatPrefix(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infra.InfraServices/AddDelSnatPrefix",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfraServicesServer).AddDelSnatPrefix(ctx, req.(*AddDelSnatPrefixRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InfraServices_NatTranslationDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NatTranslation)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfraServicesServer).NatTranslationDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infra.InfraServices/NatTranslationDelete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfraServicesServer).NatTranslationDelete(ctx, req.(*NatTranslation))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _InfraServices_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "infra.InfraServices",
+	HandlerType: (*InfraServicesServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "NatTranslationAdd",
+			Handler:    _InfraServices_NatTranslationAdd_Handler,
+		},
+		{
+			MethodName: "SetSnatAddress",
+			Handler:    _InfraServices_SetSnatAddress_Handler,
+		},
+		{
+			MethodName: "AddDelSnatPrefix",
+			Handler:    _InfraServices_AddDelSnatPrefix_Handler,
+		},
+		{
+			MethodName: "NatTranslationDelete",
+			Handler:    _InfraServices_NatTranslationDelete_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "infra.proto",
+}
+
+// InfraPolicyClient is the client API for InfraPolicy service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type InfraPolicyClient interface {
 	ActivePolicyUpdate(ctx context.Context, in *ActivePolicyUpdate, opts ...grpc.CallOption) (*Reply, error)
 	ActivePolicyRemove(ctx context.Context, in *ActivePolicyRemove, opts ...grpc.CallOption) (*Reply, error)
 	UpdateIPSet(ctx context.Context, in *IPSetUpdate, opts ...grpc.CallOption) (*Reply, error)
@@ -696,302 +1147,232 @@ type InfraAgentClient interface {
 	UpdateGlobalBGPConfig(ctx context.Context, in *GlobalBGPConfigUpdate, opts ...grpc.CallOption) (*Reply, error)
 }
 
-type infraAgentClient struct {
+type infraPolicyClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewInfraAgentClient(cc *grpc.ClientConn) InfraAgentClient {
-	return &infraAgentClient{cc}
+func NewInfraPolicyClient(cc *grpc.ClientConn) InfraPolicyClient {
+	return &infraPolicyClient{cc}
 }
 
-func (c *infraAgentClient) CreateNetwork(ctx context.Context, in *CreateNetworkRequest, opts ...grpc.CallOption) (*AddReply, error) {
-	out := new(AddReply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/CreateNetwork", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *infraAgentClient) DeleteNetwork(ctx context.Context, in *DeleteNetworkRequest, opts ...grpc.CallOption) (*DelReply, error) {
-	out := new(DelReply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/DeleteNetwork", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *infraAgentClient) SetupHostInterface(ctx context.Context, in *SetupHostInterfaceRequest, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) ActivePolicyUpdate(ctx context.Context, in *ActivePolicyUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/SetupHostInterface", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/ActivePolicyUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) NatTranslationAdd(ctx context.Context, in *NatTranslation, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) ActivePolicyRemove(ctx context.Context, in *ActivePolicyRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/NatTranslationAdd", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/ActivePolicyRemove", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) SetSnatAddress(ctx context.Context, in *SetSnatAddressRequest, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateIPSet(ctx context.Context, in *IPSetUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/SetSnatAddress", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateIPSet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) AddDelSnatPrefix(ctx context.Context, in *AddDelSnatPrefixRequest, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateIPSetDelta(ctx context.Context, in *IPSetDeltaUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/AddDelSnatPrefix", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateIPSetDelta", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) NatTranslationDelete(ctx context.Context, in *NatTranslation, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveIPSet(ctx context.Context, in *IPSetRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/NatTranslationDelete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveIPSet", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) ActivePolicyUpdate(ctx context.Context, in *ActivePolicyUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateActiveProfile(ctx context.Context, in *ActiveProfileUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/ActivePolicyUpdate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateActiveProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) ActivePolicyRemove(ctx context.Context, in *ActivePolicyRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveActiveProfile(ctx context.Context, in *ActiveProfileRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/ActivePolicyRemove", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveActiveProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateIPSet(ctx context.Context, in *IPSetUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateHostEndpoint(ctx context.Context, in *HostEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateIPSet", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateHostEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateIPSetDelta(ctx context.Context, in *IPSetDeltaUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveHostEndpoint(ctx context.Context, in *HostEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateIPSetDelta", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveHostEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveIPSet(ctx context.Context, in *IPSetRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateLocalEndpoint(ctx context.Context, in *WorkloadEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveIPSet", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateLocalEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateActiveProfile(ctx context.Context, in *ActiveProfileUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveLocalEndpoint(ctx context.Context, in *WorkloadEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateActiveProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveLocalEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveActiveProfile(ctx context.Context, in *ActiveProfileRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateHostMetaData(ctx context.Context, in *HostMetadataUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveActiveProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateHostMetaData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateHostEndpoint(ctx context.Context, in *HostEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveHostMetaData(ctx context.Context, in *HostMetadataRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateHostEndpoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveHostMetaData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveHostEndpoint(ctx context.Context, in *HostEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateServiceAccount(ctx context.Context, in *ServiceAccountUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveHostEndpoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateServiceAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateLocalEndpoint(ctx context.Context, in *WorkloadEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveServiceAccount(ctx context.Context, in *ServiceAccountRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateLocalEndpoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveServiceAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveLocalEndpoint(ctx context.Context, in *WorkloadEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateNamespace(ctx context.Context, in *NamespaceUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveLocalEndpoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateHostMetaData(ctx context.Context, in *HostMetadataUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveNamespace(ctx context.Context, in *NamespaceRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateHostMetaData", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveHostMetaData(ctx context.Context, in *HostMetadataRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateRoute(ctx context.Context, in *RouteUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveHostMetaData", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateRoute", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateServiceAccount(ctx context.Context, in *ServiceAccountUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveRoute(ctx context.Context, in *RouteRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateServiceAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveRoute", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveServiceAccount(ctx context.Context, in *ServiceAccountRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateVXLANTunnelEndpoint(ctx context.Context, in *VXLANTunnelEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveServiceAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateVXLANTunnelEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateNamespace(ctx context.Context, in *NamespaceUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveVXLANTunnelEndpoint(ctx context.Context, in *VXLANTunnelEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveVXLANTunnelEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveNamespace(ctx context.Context, in *NamespaceRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateWireguardEndpoint(ctx context.Context, in *WireguardEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateWireguardEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateRoute(ctx context.Context, in *RouteUpdate, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) RemoveWireguardEndpoint(ctx context.Context, in *WireguardEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateRoute", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/RemoveWireguardEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) RemoveRoute(ctx context.Context, in *RouteRemove, opts ...grpc.CallOption) (*Reply, error) {
+func (c *infraPolicyClient) UpdateGlobalBGPConfig(ctx context.Context, in *GlobalBGPConfigUpdate, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveRoute", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infra.InfraPolicy/UpdateGlobalBGPConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *infraAgentClient) UpdateVXLANTunnelEndpoint(ctx context.Context, in *VXLANTunnelEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
-	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateVXLANTunnelEndpoint", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *infraAgentClient) RemoveVXLANTunnelEndpoint(ctx context.Context, in *VXLANTunnelEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
-	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveVXLANTunnelEndpoint", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *infraAgentClient) UpdateWireguardEndpoint(ctx context.Context, in *WireguardEndpointUpdate, opts ...grpc.CallOption) (*Reply, error) {
-	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateWireguardEndpoint", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *infraAgentClient) RemoveWireguardEndpoint(ctx context.Context, in *WireguardEndpointRemove, opts ...grpc.CallOption) (*Reply, error) {
-	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/RemoveWireguardEndpoint", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *infraAgentClient) UpdateGlobalBGPConfig(ctx context.Context, in *GlobalBGPConfigUpdate, opts ...grpc.CallOption) (*Reply, error) {
-	out := new(Reply)
-	err := c.cc.Invoke(ctx, "/infra.InfraAgent/UpdateGlobalBGPConfig", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// InfraAgentServer is the server API for InfraAgent service.
-type InfraAgentServer interface {
-	CreateNetwork(context.Context, *CreateNetworkRequest) (*AddReply, error)
-	DeleteNetwork(context.Context, *DeleteNetworkRequest) (*DelReply, error)
-	SetupHostInterface(context.Context, *SetupHostInterfaceRequest) (*Reply, error)
-	NatTranslationAdd(context.Context, *NatTranslation) (*Reply, error)
-	SetSnatAddress(context.Context, *SetSnatAddressRequest) (*Reply, error)
-	AddDelSnatPrefix(context.Context, *AddDelSnatPrefixRequest) (*Reply, error)
-	NatTranslationDelete(context.Context, *NatTranslation) (*Reply, error)
+// InfraPolicyServer is the server API for InfraPolicy service.
+type InfraPolicyServer interface {
 	ActivePolicyUpdate(context.Context, *ActivePolicyUpdate) (*Reply, error)
 	ActivePolicyRemove(context.Context, *ActivePolicyRemove) (*Reply, error)
 	UpdateIPSet(context.Context, *IPSetUpdate) (*Reply, error)
@@ -1018,797 +1399,666 @@ type InfraAgentServer interface {
 	UpdateGlobalBGPConfig(context.Context, *GlobalBGPConfigUpdate) (*Reply, error)
 }
 
-// UnimplementedInfraAgentServer can be embedded to have forward compatible implementations.
-type UnimplementedInfraAgentServer struct {
+// UnimplementedInfraPolicyServer can be embedded to have forward compatible implementations.
+type UnimplementedInfraPolicyServer struct {
 }
 
-func (*UnimplementedInfraAgentServer) CreateNetwork(ctx context.Context, req *CreateNetworkRequest) (*AddReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNetwork not implemented")
-}
-func (*UnimplementedInfraAgentServer) DeleteNetwork(ctx context.Context, req *DeleteNetworkRequest) (*DelReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNetwork not implemented")
-}
-func (*UnimplementedInfraAgentServer) SetupHostInterface(ctx context.Context, req *SetupHostInterfaceRequest) (*Reply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetupHostInterface not implemented")
-}
-func (*UnimplementedInfraAgentServer) NatTranslationAdd(ctx context.Context, req *NatTranslation) (*Reply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NatTranslationAdd not implemented")
-}
-func (*UnimplementedInfraAgentServer) SetSnatAddress(ctx context.Context, req *SetSnatAddressRequest) (*Reply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetSnatAddress not implemented")
-}
-func (*UnimplementedInfraAgentServer) AddDelSnatPrefix(ctx context.Context, req *AddDelSnatPrefixRequest) (*Reply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddDelSnatPrefix not implemented")
-}
-func (*UnimplementedInfraAgentServer) NatTranslationDelete(ctx context.Context, req *NatTranslation) (*Reply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NatTranslationDelete not implemented")
-}
-func (*UnimplementedInfraAgentServer) ActivePolicyUpdate(ctx context.Context, req *ActivePolicyUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) ActivePolicyUpdate(ctx context.Context, req *ActivePolicyUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ActivePolicyUpdate not implemented")
 }
-func (*UnimplementedInfraAgentServer) ActivePolicyRemove(ctx context.Context, req *ActivePolicyRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) ActivePolicyRemove(ctx context.Context, req *ActivePolicyRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ActivePolicyRemove not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateIPSet(ctx context.Context, req *IPSetUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateIPSet(ctx context.Context, req *IPSetUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateIPSet not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateIPSetDelta(ctx context.Context, req *IPSetDeltaUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateIPSetDelta(ctx context.Context, req *IPSetDeltaUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateIPSetDelta not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveIPSet(ctx context.Context, req *IPSetRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveIPSet(ctx context.Context, req *IPSetRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveIPSet not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateActiveProfile(ctx context.Context, req *ActiveProfileUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateActiveProfile(ctx context.Context, req *ActiveProfileUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateActiveProfile not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveActiveProfile(ctx context.Context, req *ActiveProfileRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveActiveProfile(ctx context.Context, req *ActiveProfileRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveActiveProfile not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateHostEndpoint(ctx context.Context, req *HostEndpointUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateHostEndpoint(ctx context.Context, req *HostEndpointUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateHostEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveHostEndpoint(ctx context.Context, req *HostEndpointRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveHostEndpoint(ctx context.Context, req *HostEndpointRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveHostEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateLocalEndpoint(ctx context.Context, req *WorkloadEndpointUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateLocalEndpoint(ctx context.Context, req *WorkloadEndpointUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateLocalEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveLocalEndpoint(ctx context.Context, req *WorkloadEndpointRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveLocalEndpoint(ctx context.Context, req *WorkloadEndpointRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveLocalEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateHostMetaData(ctx context.Context, req *HostMetadataUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateHostMetaData(ctx context.Context, req *HostMetadataUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateHostMetaData not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveHostMetaData(ctx context.Context, req *HostMetadataRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveHostMetaData(ctx context.Context, req *HostMetadataRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveHostMetaData not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateServiceAccount(ctx context.Context, req *ServiceAccountUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateServiceAccount(ctx context.Context, req *ServiceAccountUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateServiceAccount not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveServiceAccount(ctx context.Context, req *ServiceAccountRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveServiceAccount(ctx context.Context, req *ServiceAccountRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveServiceAccount not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateNamespace(ctx context.Context, req *NamespaceUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateNamespace(ctx context.Context, req *NamespaceUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateNamespace not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveNamespace(ctx context.Context, req *NamespaceRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveNamespace(ctx context.Context, req *NamespaceRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveNamespace not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateRoute(ctx context.Context, req *RouteUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateRoute(ctx context.Context, req *RouteUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoute not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveRoute(ctx context.Context, req *RouteRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveRoute(ctx context.Context, req *RouteRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveRoute not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateVXLANTunnelEndpoint(ctx context.Context, req *VXLANTunnelEndpointUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateVXLANTunnelEndpoint(ctx context.Context, req *VXLANTunnelEndpointUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateVXLANTunnelEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveVXLANTunnelEndpoint(ctx context.Context, req *VXLANTunnelEndpointRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveVXLANTunnelEndpoint(ctx context.Context, req *VXLANTunnelEndpointRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveVXLANTunnelEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateWireguardEndpoint(ctx context.Context, req *WireguardEndpointUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateWireguardEndpoint(ctx context.Context, req *WireguardEndpointUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateWireguardEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) RemoveWireguardEndpoint(ctx context.Context, req *WireguardEndpointRemove) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) RemoveWireguardEndpoint(ctx context.Context, req *WireguardEndpointRemove) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveWireguardEndpoint not implemented")
 }
-func (*UnimplementedInfraAgentServer) UpdateGlobalBGPConfig(ctx context.Context, req *GlobalBGPConfigUpdate) (*Reply, error) {
+func (*UnimplementedInfraPolicyServer) UpdateGlobalBGPConfig(ctx context.Context, req *GlobalBGPConfigUpdate) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateGlobalBGPConfig not implemented")
 }
 
-func RegisterInfraAgentServer(s *grpc.Server, srv InfraAgentServer) {
-	s.RegisterService(&_InfraAgent_serviceDesc, srv)
+func RegisterInfraPolicyServer(s *grpc.Server, srv InfraPolicyServer) {
+	s.RegisterService(&_InfraPolicy_serviceDesc, srv)
 }
 
-func _InfraAgent_CreateNetwork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateNetworkRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfraAgentServer).CreateNetwork(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/infra.InfraAgent/CreateNetwork",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).CreateNetwork(ctx, req.(*CreateNetworkRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InfraAgent_DeleteNetwork_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteNetworkRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfraAgentServer).DeleteNetwork(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/infra.InfraAgent/DeleteNetwork",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).DeleteNetwork(ctx, req.(*DeleteNetworkRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InfraAgent_SetupHostInterface_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetupHostInterfaceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfraAgentServer).SetupHostInterface(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/infra.InfraAgent/SetupHostInterface",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).SetupHostInterface(ctx, req.(*SetupHostInterfaceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InfraAgent_NatTranslationAdd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NatTranslation)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfraAgentServer).NatTranslationAdd(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/infra.InfraAgent/NatTranslationAdd",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).NatTranslationAdd(ctx, req.(*NatTranslation))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InfraAgent_SetSnatAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetSnatAddressRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfraAgentServer).SetSnatAddress(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/infra.InfraAgent/SetSnatAddress",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).SetSnatAddress(ctx, req.(*SetSnatAddressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InfraAgent_AddDelSnatPrefix_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddDelSnatPrefixRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfraAgentServer).AddDelSnatPrefix(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/infra.InfraAgent/AddDelSnatPrefix",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).AddDelSnatPrefix(ctx, req.(*AddDelSnatPrefixRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InfraAgent_NatTranslationDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NatTranslation)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfraAgentServer).NatTranslationDelete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/infra.InfraAgent/NatTranslationDelete",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).NatTranslationDelete(ctx, req.(*NatTranslation))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _InfraAgent_ActivePolicyUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_ActivePolicyUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ActivePolicyUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).ActivePolicyUpdate(ctx, in)
+		return srv.(InfraPolicyServer).ActivePolicyUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/ActivePolicyUpdate",
+		FullMethod: "/infra.InfraPolicy/ActivePolicyUpdate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).ActivePolicyUpdate(ctx, req.(*ActivePolicyUpdate))
+		return srv.(InfraPolicyServer).ActivePolicyUpdate(ctx, req.(*ActivePolicyUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_ActivePolicyRemove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_ActivePolicyRemove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ActivePolicyRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).ActivePolicyRemove(ctx, in)
+		return srv.(InfraPolicyServer).ActivePolicyRemove(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/ActivePolicyRemove",
+		FullMethod: "/infra.InfraPolicy/ActivePolicyRemove",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).ActivePolicyRemove(ctx, req.(*ActivePolicyRemove))
+		return srv.(InfraPolicyServer).ActivePolicyRemove(ctx, req.(*ActivePolicyRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateIPSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateIPSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IPSetUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateIPSet(ctx, in)
+		return srv.(InfraPolicyServer).UpdateIPSet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateIPSet",
+		FullMethod: "/infra.InfraPolicy/UpdateIPSet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateIPSet(ctx, req.(*IPSetUpdate))
+		return srv.(InfraPolicyServer).UpdateIPSet(ctx, req.(*IPSetUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateIPSetDelta_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateIPSetDelta_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IPSetDeltaUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateIPSetDelta(ctx, in)
+		return srv.(InfraPolicyServer).UpdateIPSetDelta(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateIPSetDelta",
+		FullMethod: "/infra.InfraPolicy/UpdateIPSetDelta",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateIPSetDelta(ctx, req.(*IPSetDeltaUpdate))
+		return srv.(InfraPolicyServer).UpdateIPSetDelta(ctx, req.(*IPSetDeltaUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveIPSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveIPSet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IPSetRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveIPSet(ctx, in)
+		return srv.(InfraPolicyServer).RemoveIPSet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveIPSet",
+		FullMethod: "/infra.InfraPolicy/RemoveIPSet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveIPSet(ctx, req.(*IPSetRemove))
+		return srv.(InfraPolicyServer).RemoveIPSet(ctx, req.(*IPSetRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateActiveProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateActiveProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ActiveProfileUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateActiveProfile(ctx, in)
+		return srv.(InfraPolicyServer).UpdateActiveProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateActiveProfile",
+		FullMethod: "/infra.InfraPolicy/UpdateActiveProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateActiveProfile(ctx, req.(*ActiveProfileUpdate))
+		return srv.(InfraPolicyServer).UpdateActiveProfile(ctx, req.(*ActiveProfileUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveActiveProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveActiveProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ActiveProfileRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveActiveProfile(ctx, in)
+		return srv.(InfraPolicyServer).RemoveActiveProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveActiveProfile",
+		FullMethod: "/infra.InfraPolicy/RemoveActiveProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveActiveProfile(ctx, req.(*ActiveProfileRemove))
+		return srv.(InfraPolicyServer).RemoveActiveProfile(ctx, req.(*ActiveProfileRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateHostEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateHostEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HostEndpointUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateHostEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).UpdateHostEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateHostEndpoint",
+		FullMethod: "/infra.InfraPolicy/UpdateHostEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateHostEndpoint(ctx, req.(*HostEndpointUpdate))
+		return srv.(InfraPolicyServer).UpdateHostEndpoint(ctx, req.(*HostEndpointUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveHostEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveHostEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HostEndpointRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveHostEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).RemoveHostEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveHostEndpoint",
+		FullMethod: "/infra.InfraPolicy/RemoveHostEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveHostEndpoint(ctx, req.(*HostEndpointRemove))
+		return srv.(InfraPolicyServer).RemoveHostEndpoint(ctx, req.(*HostEndpointRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateLocalEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateLocalEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WorkloadEndpointUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateLocalEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).UpdateLocalEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateLocalEndpoint",
+		FullMethod: "/infra.InfraPolicy/UpdateLocalEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateLocalEndpoint(ctx, req.(*WorkloadEndpointUpdate))
+		return srv.(InfraPolicyServer).UpdateLocalEndpoint(ctx, req.(*WorkloadEndpointUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveLocalEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveLocalEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WorkloadEndpointRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveLocalEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).RemoveLocalEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveLocalEndpoint",
+		FullMethod: "/infra.InfraPolicy/RemoveLocalEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveLocalEndpoint(ctx, req.(*WorkloadEndpointRemove))
+		return srv.(InfraPolicyServer).RemoveLocalEndpoint(ctx, req.(*WorkloadEndpointRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateHostMetaData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateHostMetaData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HostMetadataUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateHostMetaData(ctx, in)
+		return srv.(InfraPolicyServer).UpdateHostMetaData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateHostMetaData",
+		FullMethod: "/infra.InfraPolicy/UpdateHostMetaData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateHostMetaData(ctx, req.(*HostMetadataUpdate))
+		return srv.(InfraPolicyServer).UpdateHostMetaData(ctx, req.(*HostMetadataUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveHostMetaData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveHostMetaData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HostMetadataRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveHostMetaData(ctx, in)
+		return srv.(InfraPolicyServer).RemoveHostMetaData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveHostMetaData",
+		FullMethod: "/infra.InfraPolicy/RemoveHostMetaData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveHostMetaData(ctx, req.(*HostMetadataRemove))
+		return srv.(InfraPolicyServer).RemoveHostMetaData(ctx, req.(*HostMetadataRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateServiceAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateServiceAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ServiceAccountUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateServiceAccount(ctx, in)
+		return srv.(InfraPolicyServer).UpdateServiceAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateServiceAccount",
+		FullMethod: "/infra.InfraPolicy/UpdateServiceAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateServiceAccount(ctx, req.(*ServiceAccountUpdate))
+		return srv.(InfraPolicyServer).UpdateServiceAccount(ctx, req.(*ServiceAccountUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveServiceAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveServiceAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ServiceAccountRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveServiceAccount(ctx, in)
+		return srv.(InfraPolicyServer).RemoveServiceAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveServiceAccount",
+		FullMethod: "/infra.InfraPolicy/RemoveServiceAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveServiceAccount(ctx, req.(*ServiceAccountRemove))
+		return srv.(InfraPolicyServer).RemoveServiceAccount(ctx, req.(*ServiceAccountRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NamespaceUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateNamespace(ctx, in)
+		return srv.(InfraPolicyServer).UpdateNamespace(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateNamespace",
+		FullMethod: "/infra.InfraPolicy/UpdateNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateNamespace(ctx, req.(*NamespaceUpdate))
+		return srv.(InfraPolicyServer).UpdateNamespace(ctx, req.(*NamespaceUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NamespaceRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveNamespace(ctx, in)
+		return srv.(InfraPolicyServer).RemoveNamespace(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveNamespace",
+		FullMethod: "/infra.InfraPolicy/RemoveNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveNamespace(ctx, req.(*NamespaceRemove))
+		return srv.(InfraPolicyServer).RemoveNamespace(ctx, req.(*NamespaceRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RouteUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateRoute(ctx, in)
+		return srv.(InfraPolicyServer).UpdateRoute(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateRoute",
+		FullMethod: "/infra.InfraPolicy/UpdateRoute",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateRoute(ctx, req.(*RouteUpdate))
+		return srv.(InfraPolicyServer).UpdateRoute(ctx, req.(*RouteUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveRoute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RouteRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveRoute(ctx, in)
+		return srv.(InfraPolicyServer).RemoveRoute(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveRoute",
+		FullMethod: "/infra.InfraPolicy/RemoveRoute",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveRoute(ctx, req.(*RouteRemove))
+		return srv.(InfraPolicyServer).RemoveRoute(ctx, req.(*RouteRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateVXLANTunnelEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateVXLANTunnelEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VXLANTunnelEndpointUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateVXLANTunnelEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).UpdateVXLANTunnelEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateVXLANTunnelEndpoint",
+		FullMethod: "/infra.InfraPolicy/UpdateVXLANTunnelEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateVXLANTunnelEndpoint(ctx, req.(*VXLANTunnelEndpointUpdate))
+		return srv.(InfraPolicyServer).UpdateVXLANTunnelEndpoint(ctx, req.(*VXLANTunnelEndpointUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveVXLANTunnelEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveVXLANTunnelEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VXLANTunnelEndpointRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveVXLANTunnelEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).RemoveVXLANTunnelEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveVXLANTunnelEndpoint",
+		FullMethod: "/infra.InfraPolicy/RemoveVXLANTunnelEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveVXLANTunnelEndpoint(ctx, req.(*VXLANTunnelEndpointRemove))
+		return srv.(InfraPolicyServer).RemoveVXLANTunnelEndpoint(ctx, req.(*VXLANTunnelEndpointRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateWireguardEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateWireguardEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WireguardEndpointUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateWireguardEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).UpdateWireguardEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateWireguardEndpoint",
+		FullMethod: "/infra.InfraPolicy/UpdateWireguardEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateWireguardEndpoint(ctx, req.(*WireguardEndpointUpdate))
+		return srv.(InfraPolicyServer).UpdateWireguardEndpoint(ctx, req.(*WireguardEndpointUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_RemoveWireguardEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_RemoveWireguardEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WireguardEndpointRemove)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).RemoveWireguardEndpoint(ctx, in)
+		return srv.(InfraPolicyServer).RemoveWireguardEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/RemoveWireguardEndpoint",
+		FullMethod: "/infra.InfraPolicy/RemoveWireguardEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).RemoveWireguardEndpoint(ctx, req.(*WireguardEndpointRemove))
+		return srv.(InfraPolicyServer).RemoveWireguardEndpoint(ctx, req.(*WireguardEndpointRemove))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InfraAgent_UpdateGlobalBGPConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InfraPolicy_UpdateGlobalBGPConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GlobalBGPConfigUpdate)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfraAgentServer).UpdateGlobalBGPConfig(ctx, in)
+		return srv.(InfraPolicyServer).UpdateGlobalBGPConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infra.InfraAgent/UpdateGlobalBGPConfig",
+		FullMethod: "/infra.InfraPolicy/UpdateGlobalBGPConfig",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfraAgentServer).UpdateGlobalBGPConfig(ctx, req.(*GlobalBGPConfigUpdate))
+		return srv.(InfraPolicyServer).UpdateGlobalBGPConfig(ctx, req.(*GlobalBGPConfigUpdate))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _InfraAgent_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "infra.InfraAgent",
-	HandlerType: (*InfraAgentServer)(nil),
+var _InfraPolicy_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "infra.InfraPolicy",
+	HandlerType: (*InfraPolicyServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateNetwork",
-			Handler:    _InfraAgent_CreateNetwork_Handler,
-		},
-		{
-			MethodName: "DeleteNetwork",
-			Handler:    _InfraAgent_DeleteNetwork_Handler,
-		},
-		{
-			MethodName: "SetupHostInterface",
-			Handler:    _InfraAgent_SetupHostInterface_Handler,
-		},
-		{
-			MethodName: "NatTranslationAdd",
-			Handler:    _InfraAgent_NatTranslationAdd_Handler,
-		},
-		{
-			MethodName: "SetSnatAddress",
-			Handler:    _InfraAgent_SetSnatAddress_Handler,
-		},
-		{
-			MethodName: "AddDelSnatPrefix",
-			Handler:    _InfraAgent_AddDelSnatPrefix_Handler,
-		},
-		{
-			MethodName: "NatTranslationDelete",
-			Handler:    _InfraAgent_NatTranslationDelete_Handler,
-		},
-		{
 			MethodName: "ActivePolicyUpdate",
-			Handler:    _InfraAgent_ActivePolicyUpdate_Handler,
+			Handler:    _InfraPolicy_ActivePolicyUpdate_Handler,
 		},
 		{
 			MethodName: "ActivePolicyRemove",
-			Handler:    _InfraAgent_ActivePolicyRemove_Handler,
+			Handler:    _InfraPolicy_ActivePolicyRemove_Handler,
 		},
 		{
 			MethodName: "UpdateIPSet",
-			Handler:    _InfraAgent_UpdateIPSet_Handler,
+			Handler:    _InfraPolicy_UpdateIPSet_Handler,
 		},
 		{
 			MethodName: "UpdateIPSetDelta",
-			Handler:    _InfraAgent_UpdateIPSetDelta_Handler,
+			Handler:    _InfraPolicy_UpdateIPSetDelta_Handler,
 		},
 		{
 			MethodName: "RemoveIPSet",
-			Handler:    _InfraAgent_RemoveIPSet_Handler,
+			Handler:    _InfraPolicy_RemoveIPSet_Handler,
 		},
 		{
 			MethodName: "UpdateActiveProfile",
-			Handler:    _InfraAgent_UpdateActiveProfile_Handler,
+			Handler:    _InfraPolicy_UpdateActiveProfile_Handler,
 		},
 		{
 			MethodName: "RemoveActiveProfile",
-			Handler:    _InfraAgent_RemoveActiveProfile_Handler,
+			Handler:    _InfraPolicy_RemoveActiveProfile_Handler,
 		},
 		{
 			MethodName: "UpdateHostEndpoint",
-			Handler:    _InfraAgent_UpdateHostEndpoint_Handler,
+			Handler:    _InfraPolicy_UpdateHostEndpoint_Handler,
 		},
 		{
 			MethodName: "RemoveHostEndpoint",
-			Handler:    _InfraAgent_RemoveHostEndpoint_Handler,
+			Handler:    _InfraPolicy_RemoveHostEndpoint_Handler,
 		},
 		{
 			MethodName: "UpdateLocalEndpoint",
-			Handler:    _InfraAgent_UpdateLocalEndpoint_Handler,
+			Handler:    _InfraPolicy_UpdateLocalEndpoint_Handler,
 		},
 		{
 			MethodName: "RemoveLocalEndpoint",
-			Handler:    _InfraAgent_RemoveLocalEndpoint_Handler,
+			Handler:    _InfraPolicy_RemoveLocalEndpoint_Handler,
 		},
 		{
 			MethodName: "UpdateHostMetaData",
-			Handler:    _InfraAgent_UpdateHostMetaData_Handler,
+			Handler:    _InfraPolicy_UpdateHostMetaData_Handler,
 		},
 		{
 			MethodName: "RemoveHostMetaData",
-			Handler:    _InfraAgent_RemoveHostMetaData_Handler,
+			Handler:    _InfraPolicy_RemoveHostMetaData_Handler,
 		},
 		{
 			MethodName: "UpdateServiceAccount",
-			Handler:    _InfraAgent_UpdateServiceAccount_Handler,
+			Handler:    _InfraPolicy_UpdateServiceAccount_Handler,
 		},
 		{
 			MethodName: "RemoveServiceAccount",
-			Handler:    _InfraAgent_RemoveServiceAccount_Handler,
+			Handler:    _InfraPolicy_RemoveServiceAccount_Handler,
 		},
 		{
 			MethodName: "UpdateNamespace",
-			Handler:    _InfraAgent_UpdateNamespace_Handler,
+			Handler:    _InfraPolicy_UpdateNamespace_Handler,
 		},
 		{
 			MethodName: "RemoveNamespace",
-			Handler:    _InfraAgent_RemoveNamespace_Handler,
+			Handler:    _InfraPolicy_RemoveNamespace_Handler,
 		},
 		{
 			MethodName: "UpdateRoute",
-			Handler:    _InfraAgent_UpdateRoute_Handler,
+			Handler:    _InfraPolicy_UpdateRoute_Handler,
 		},
 		{
 			MethodName: "RemoveRoute",
-			Handler:    _InfraAgent_RemoveRoute_Handler,
+			Handler:    _InfraPolicy_RemoveRoute_Handler,
 		},
 		{
 			MethodName: "UpdateVXLANTunnelEndpoint",
-			Handler:    _InfraAgent_UpdateVXLANTunnelEndpoint_Handler,
+			Handler:    _InfraPolicy_UpdateVXLANTunnelEndpoint_Handler,
 		},
 		{
 			MethodName: "RemoveVXLANTunnelEndpoint",
-			Handler:    _InfraAgent_RemoveVXLANTunnelEndpoint_Handler,
+			Handler:    _InfraPolicy_RemoveVXLANTunnelEndpoint_Handler,
 		},
 		{
 			MethodName: "UpdateWireguardEndpoint",
-			Handler:    _InfraAgent_UpdateWireguardEndpoint_Handler,
+			Handler:    _InfraPolicy_UpdateWireguardEndpoint_Handler,
 		},
 		{
 			MethodName: "RemoveWireguardEndpoint",
-			Handler:    _InfraAgent_RemoveWireguardEndpoint_Handler,
+			Handler:    _InfraPolicy_RemoveWireguardEndpoint_Handler,
 		},
 		{
 			MethodName: "UpdateGlobalBGPConfig",
-			Handler:    _InfraAgent_UpdateGlobalBGPConfig_Handler,
+			Handler:    _InfraPolicy_UpdateGlobalBGPConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "infra.proto",
+}
+
+func (m *Reply) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Reply) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Reply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.ErrorMessage) > 0 {
+		i -= len(m.ErrorMessage)
+		copy(dAtA[i:], m.ErrorMessage)
+		i = encodeVarintInfra(dAtA, i, uint64(len(m.ErrorMessage)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Successful {
+		i--
+		if m.Successful {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *NatEndpoint) Marshal() (dAtA []byte, err error) {
@@ -1971,50 +2221,6 @@ func (m *NatTranslation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *Reply) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Reply) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Reply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.ErrorMessage) > 0 {
-		i -= len(m.ErrorMessage)
-		copy(dAtA[i:], m.ErrorMessage)
-		i = encodeVarintInfra(dAtA, i, uint64(len(m.ErrorMessage)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Successful {
-		i--
-		if m.Successful {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *SetSnatAddressRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -2129,26 +2335,35 @@ func (m *CreateNetworkRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.MacAddr)
 		i = encodeVarintInfra(dAtA, i, uint64(len(m.MacAddr)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x22
 	}
 	if len(m.HostIfName) > 0 {
 		i -= len(m.HostIfName)
 		copy(dAtA[i:], m.HostIfName)
 		i = encodeVarintInfra(dAtA, i, uint64(len(m.HostIfName)))
 		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.DesiredHostInterfaceName) > 0 {
+		i -= len(m.DesiredHostInterfaceName)
+		copy(dAtA[i:], m.DesiredHostInterfaceName)
+		i = encodeVarintInfra(dAtA, i, uint64(len(m.DesiredHostInterfaceName)))
+		i--
 		dAtA[i] = 0x12
 	}
-	if m.AddRequest != nil {
-		{
-			size, err := m.AddRequest.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
+	if len(m.ContainerIps) > 0 {
+		for iNdEx := len(m.ContainerIps) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ContainerIps[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintInfra(dAtA, i, uint64(size))
 			}
-			i -= size
-			i = encodeVarintInfra(dAtA, i, uint64(size))
+			i--
+			dAtA[i] = 0xa
 		}
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -2198,15 +2413,10 @@ func (m *DeleteNetworkRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if m.DelRequest != nil {
-		{
-			size, err := m.DelRequest.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintInfra(dAtA, i, uint64(size))
-		}
+	if len(m.InterfaceName) > 0 {
+		i -= len(m.InterfaceName)
+		copy(dAtA[i:], m.InterfaceName)
+		i = encodeVarintInfra(dAtA, i, uint64(len(m.InterfaceName)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -2261,6 +2471,98 @@ func (m *SetupHostInterfaceRequest) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
+func (m *IPConfiguration) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *IPConfiguration) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *IPConfiguration) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Gateway) > 0 {
+		i -= len(m.Gateway)
+		copy(dAtA[i:], m.Gateway)
+		i = encodeVarintInfra(dAtA, i, uint64(len(m.Gateway)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintInfra(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *InfraAddReply) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *InfraAddReply) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InfraAddReply) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.HostInterfaceName) > 0 {
+		i -= len(m.HostInterfaceName)
+		copy(dAtA[i:], m.HostInterfaceName)
+		i = encodeVarintInfra(dAtA, i, uint64(len(m.HostInterfaceName)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.ErrorMessage) > 0 {
+		i -= len(m.ErrorMessage)
+		copy(dAtA[i:], m.ErrorMessage)
+		i = encodeVarintInfra(dAtA, i, uint64(len(m.ErrorMessage)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Successful {
+		i--
+		if m.Successful {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintInfra(dAtA []byte, offset int, v uint64) int {
 	offset -= sovInfra(v)
 	base := offset
@@ -2272,6 +2574,25 @@ func encodeVarintInfra(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *Reply) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Successful {
+		n += 2
+	}
+	l = len(m.ErrorMessage)
+	if l > 0 {
+		n += 1 + l + sovInfra(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func (m *NatEndpoint) Size() (n int) {
 	if m == nil {
 		return 0
@@ -2340,25 +2661,6 @@ func (m *NatTranslation) Size() (n int) {
 	return n
 }
 
-func (m *Reply) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Successful {
-		n += 2
-	}
-	l = len(m.ErrorMessage)
-	if l > 0 {
-		n += 1 + l + sovInfra(uint64(l))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
-	return n
-}
-
 func (m *SetSnatAddressRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -2404,8 +2706,14 @@ func (m *CreateNetworkRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.AddRequest != nil {
-		l = m.AddRequest.Size()
+	if len(m.ContainerIps) > 0 {
+		for _, e := range m.ContainerIps {
+			l = e.Size()
+			n += 1 + l + sovInfra(uint64(l))
+		}
+	}
+	l = len(m.DesiredHostInterfaceName)
+	if l > 0 {
 		n += 1 + l + sovInfra(uint64(l))
 	}
 	l = len(m.HostIfName)
@@ -2428,8 +2736,8 @@ func (m *DeleteNetworkRequest) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.DelRequest != nil {
-		l = m.DelRequest.Size()
+	l = len(m.InterfaceName)
+	if l > 0 {
 		n += 1 + l + sovInfra(uint64(l))
 	}
 	l = len(m.HostIfName)
@@ -2474,11 +2782,157 @@ func (m *SetupHostInterfaceRequest) Size() (n int) {
 	return n
 }
 
+func (m *IPConfiguration) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovInfra(uint64(l))
+	}
+	l = len(m.Gateway)
+	if l > 0 {
+		n += 1 + l + sovInfra(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *InfraAddReply) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Successful {
+		n += 2
+	}
+	l = len(m.ErrorMessage)
+	if l > 0 {
+		n += 1 + l + sovInfra(uint64(l))
+	}
+	l = len(m.HostInterfaceName)
+	if l > 0 {
+		n += 1 + l + sovInfra(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func sovInfra(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozInfra(x uint64) (n int) {
 	return sovInfra(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *Reply) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowInfra
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Reply: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Reply: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Successful", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Successful = bool(v != 0)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ErrorMessage", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInfra
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ErrorMessage = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipInfra(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *NatEndpoint) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -2878,109 +3332,6 @@ func (m *NatTranslation) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Reply) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowInfra
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Reply: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Reply: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Successful", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInfra
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Successful = bool(v != 0)
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ErrorMessage", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowInfra
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthInfra
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthInfra
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ErrorMessage = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipInfra(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthInfra
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *SetSnatAddressRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3230,7 +3581,7 @@ func (m *CreateNetworkRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AddRequest", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ContainerIps", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -3257,14 +3608,44 @@ func (m *CreateNetworkRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.AddRequest == nil {
-				m.AddRequest = &AddRequest{}
-			}
-			if err := m.AddRequest.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.ContainerIps = append(m.ContainerIps, &IPConfiguration{})
+			if err := m.ContainerIps[len(m.ContainerIps)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DesiredHostInterfaceName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInfra
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DesiredHostInterfaceName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field HostIfName", wireType)
 			}
@@ -3296,7 +3677,7 @@ func (m *CreateNetworkRequest) Unmarshal(dAtA []byte) error {
 			}
 			m.HostIfName = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MacAddr", wireType)
 			}
@@ -3381,9 +3762,9 @@ func (m *DeleteNetworkRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DelRequest", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field InterfaceName", wireType)
 			}
-			var msglen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowInfra
@@ -3393,27 +3774,23 @@ func (m *DeleteNetworkRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthInfra
 			}
-			postIndex := iNdEx + msglen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthInfra
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.DelRequest == nil {
-				m.DelRequest = &DelRequest{}
-			}
-			if err := m.DelRequest.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
+			m.InterfaceName = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
@@ -3657,6 +4034,256 @@ func (m *SetupHostInterfaceRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.MacAddr = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipInfra(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *IPConfiguration) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowInfra
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: IPConfiguration: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: IPConfiguration: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInfra
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Gateway", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInfra
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Gateway = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipInfra(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *InfraAddReply) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowInfra
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: InfraAddReply: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: InfraAddReply: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Successful", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Successful = bool(v != 0)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ErrorMessage", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInfra
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ErrorMessage = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HostInterfaceName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowInfra
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthInfra
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInfra
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.HostInterfaceName = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

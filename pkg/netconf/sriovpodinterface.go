@@ -25,7 +25,9 @@ import (
 	"github.com/ipdk-io/k8s-infra-offload/pkg/pool"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/utils"
-	pb "github.com/ipdk-io/k8s-infra-offload/proto"
+
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
+
 	"github.com/sirupsen/logrus"
 	"github.com/vishvananda/netlink"
 )
@@ -93,7 +95,7 @@ func (pi *sriovPodInterface) setup() error {
 	types.NodeInfraHostInterfaceName = res.InterfaceInfo.InterfaceName
 
 	// dial inframmanger and setup host interface
-	request := &pb.SetupHostInterfaceRequest{
+	request := &proto.SetupHostInterfaceRequest{
 		IfName:   types.NodeInfraHostInterfaceName,
 		Ipv4Addr: ipnet.String(),
 		MacAddr:  res.InterfaceInfo.MacAddr,
@@ -160,7 +162,7 @@ func (pi *sriovPodInterface) perepareInterface() (netlink.Link, *pool.Resource, 
 	return link, res, err
 }
 
-func (pi *sriovPodInterface) CreatePodInterface(in *pb.AddRequest) (*types.InterfaceInfo, error) {
+func (pi *sriovPodInterface) CreatePodInterface(in *proto.AddRequest) (*types.InterfaceInfo, error) {
 	res, err := pi.pool.Get()
 	if err != nil {
 		pi.log.Errorf("failed to get VF for pod error: %v", err)
@@ -187,7 +189,7 @@ func (pi *sriovPodInterface) CreatePodInterface(in *pb.AddRequest) (*types.Inter
 	return res.InterfaceInfo, nil
 }
 
-func (pi *sriovPodInterface) ReleasePodInterface(in *pb.DelRequest) error {
+func (pi *sriovPodInterface) ReleasePodInterface(in *proto.DelRequest) error {
 	// release used VF
 	dataDir := utilsGetDataDirPath(types.SriovPodInterface)
 	refid := filepath.Base(in.Netns)
@@ -205,11 +207,18 @@ func (pi *sriovPodInterface) ReleasePodInterface(in *pb.DelRequest) error {
 	return nil
 }
 
-func (pi *sriovPodInterface) SetupNetwork(ctx context.Context, c pb.InfraAgentClient, intfInfo *types.InterfaceInfo, in *pb.AddRequest) (*pb.AddReply, error) {
-	request := &pb.CreateNetworkRequest{
-		AddRequest: in,
-		HostIfName: in.DesiredHostInterfaceName,
-		MacAddr:    intfInfo.MacAddr,
+func (pi *sriovPodInterface) SetupNetwork(ctx context.Context, c proto.InfraCniClient, intfInfo *types.InterfaceInfo, in *proto.AddRequest) (*proto.AddReply, error) {
+	cips := make([]*proto.IPConfiguration, 0)
+	for _, e := range in.ContainerIps {
+		cips = append(cips, &proto.IPConfiguration{
+			Address: e.Address,
+			Gateway: e.Gateway,
+		})
+	}
+	request := &proto.CreateNetworkRequest{
+		ContainerIps: cips,
+		HostIfName:   in.DesiredHostInterfaceName,
+		MacAddr:      intfInfo.MacAddr,
 	}
 	// Note: We may need to call different InfraAgentClient method for SRIOV VF with different payloads
 	out, err := c.CreateNetwork(ctx, request)
@@ -217,11 +226,14 @@ func (pi *sriovPodInterface) SetupNetwork(ctx context.Context, c pb.InfraAgentCl
 		return nil, err
 	}
 
-	return out, nil
+	return &proto.AddReply{
+		Successful:   out.Successful,
+		ErrorMessage: out.ErrorMessage,
+	}, nil
 }
 
-func (pi *sriovPodInterface) ReleaseNetwork(ctx context.Context, c pb.InfraAgentClient, in *pb.DelRequest) (*pb.DelReply, error) {
-	out := &pb.DelReply{
+func (pi *sriovPodInterface) ReleaseNetwork(ctx context.Context, c proto.InfraCniClient, in *proto.DelRequest) (*proto.DelReply, error) {
+	out := &proto.DelReply{
 		Successful: true,
 	}
 	// get interface config from cache
@@ -258,12 +270,20 @@ func (pi *sriovPodInterface) ReleaseNetwork(ctx context.Context, c pb.InfraAgent
 		out.ErrorMessage = err.Error()
 		return out, err
 	}
-	request := &pb.DeleteNetworkRequest{
-		DelRequest: in,
-		HostIfName: conf.InterfaceName,
-		MacAddr:    conf.MacAddr,
-		Ipv4Addr:   ip,
+	request := &proto.DeleteNetworkRequest{
+		HostIfName:    conf.InterfaceName,
+		MacAddr:       conf.MacAddr,
+		Ipv4Addr:      ip,
+		InterfaceName: in.InterfaceName,
 	}
+	response, err := c.DeleteNetwork(ctx, request)
+	if err != nil {
+		out.ErrorMessage = err.Error()
+		out.Successful = false
+		return out, err
+	}
+	out.Successful = response.Successful
+	out.ErrorMessage = response.ErrorMessage
 
-	return c.DeleteNetwork(ctx, request)
+	return out, nil
 }

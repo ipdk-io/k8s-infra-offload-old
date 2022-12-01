@@ -26,7 +26,8 @@ import (
 	"github.com/ipdk-io/k8s-infra-offload/pkg/pool"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/utils"
-	pb "github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/vishvananda/netlink"
@@ -116,7 +117,7 @@ func (pi *tapPodInterface) setup(intfs []*types.InterfaceInfo) error {
 	types.NodeInfraHostInterfaceName = res.InterfaceInfo.InterfaceName
 
 	// dial inframanager and setup host interface
-	request := &pb.SetupHostInterfaceRequest{
+	request := &proto.SetupHostInterfaceRequest{
 		IfName:   types.NodeInfraHostInterfaceName,
 		Ipv4Addr: ipnet.String(),
 		MacAddr:  res.InterfaceInfo.MacAddr,
@@ -181,7 +182,7 @@ func getHostIPfromPodCIDR(log *logrus.Entry, ec *utils.EnvConfigurer) (*net.IPNe
 	return ipnet, nil
 }
 
-func (pi *tapPodInterface) CreatePodInterface(in *pb.AddRequest) (*types.InterfaceInfo, error) {
+func (pi *tapPodInterface) CreatePodInterface(in *proto.AddRequest) (*types.InterfaceInfo, error) {
 	res, err := pi.pool.Get()
 	if err != nil {
 		pi.log.Errorf("failed to get a free interface for pod error: %v", err)
@@ -207,7 +208,7 @@ func (pi *tapPodInterface) CreatePodInterface(in *pb.AddRequest) (*types.Interfa
 	return res.InterfaceInfo, nil
 }
 
-func (pi *tapPodInterface) ReleasePodInterface(in *pb.DelRequest) error {
+func (pi *tapPodInterface) ReleasePodInterface(in *proto.DelRequest) error {
 	// release used interface
 	refid := filepath.Base(in.Netns)
 	conf, err := readInterfaceConf(utilsGetDataDirPath(types.TapInterface), refid, in.InterfaceName)
@@ -228,11 +229,19 @@ func (pi *tapPodInterface) ReleasePodInterface(in *pb.DelRequest) error {
 	return nil
 }
 
-func (pi *tapPodInterface) SetupNetwork(ctx context.Context, c pb.InfraAgentClient, intfInfo *types.InterfaceInfo, in *pb.AddRequest) (*pb.AddReply, error) {
-	request := &pb.CreateNetworkRequest{
-		AddRequest: in,
-		HostIfName: in.DesiredHostInterfaceName,
-		MacAddr:    intfInfo.MacAddr,
+func (pi *tapPodInterface) SetupNetwork(ctx context.Context, c proto.InfraCniClient, intfInfo *types.InterfaceInfo, in *proto.AddRequest) (*proto.AddReply, error) {
+	cips := make([]*proto.IPConfiguration, 0)
+	for _, e := range in.ContainerIps {
+		cips = append(cips, &proto.IPConfiguration{
+			Address: e.Address,
+			Gateway: e.Gateway,
+		})
+	}
+	request := &proto.CreateNetworkRequest{
+		ContainerIps:             cips,
+		DesiredHostInterfaceName: in.DesiredHostInterfaceName,
+		HostIfName:               in.DesiredHostInterfaceName,
+		MacAddr:                  intfInfo.MacAddr,
 	}
 	// Note: We may need to call different InfraAgentClient method for Tap with different payloads
 	out, err := c.CreateNetwork(ctx, request)
@@ -240,11 +249,14 @@ func (pi *tapPodInterface) SetupNetwork(ctx context.Context, c pb.InfraAgentClie
 		return nil, err
 	}
 
-	return out, nil
+	return &proto.AddReply{
+		Successful:   out.Successful,
+		ErrorMessage: out.ErrorMessage,
+	}, nil
 }
 
-func (pi *tapPodInterface) ReleaseNetwork(ctx context.Context, c pb.InfraAgentClient, in *pb.DelRequest) (*pb.DelReply, error) {
-	out := &pb.DelReply{
+func (pi *tapPodInterface) ReleaseNetwork(ctx context.Context, c proto.InfraCniClient, in *proto.DelRequest) (*proto.DelReply, error) {
+	out := &proto.DelReply{
 		Successful: true,
 	}
 	// get interface config from cache
@@ -287,12 +299,19 @@ func (pi *tapPodInterface) ReleaseNetwork(ctx context.Context, c pb.InfraAgentCl
 		out.ErrorMessage = err.Error()
 		return out, err
 	}
-	request := &pb.DeleteNetworkRequest{
-		DelRequest: in,
-		HostIfName: conf.InterfaceName,
-		MacAddr:    conf.MacAddr,
-		Ipv4Addr:   ip,
+	request := &proto.DeleteNetworkRequest{
+		InterfaceName: in.InterfaceName,
+		HostIfName:    conf.InterfaceName,
+		MacAddr:       conf.MacAddr,
+		Ipv4Addr:      ip,
 	}
-
-	return c.DeleteNetwork(ctx, request)
+	response, err := c.DeleteNetwork(ctx, request)
+	if err != nil {
+		out.ErrorMessage = err.Error()
+		out.Successful = false
+		return out, err
+	}
+	out.Successful = response.Successful
+	out.ErrorMessage = response.ErrorMessage
+	return out, nil
 }

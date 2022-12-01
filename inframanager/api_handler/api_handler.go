@@ -159,7 +159,9 @@ func CreateServer(log *log.Entry) *ApiServer {
 	server.listener = listen
 	server.log = log
 
-	proto.RegisterInfraAgentServer(server.grpc, server)
+	proto.RegisterInfraCniServer(server.grpc, server)
+	proto.RegisterInfraServicesServer(server.grpc, server)
+	proto.RegisterInfraPolicyServer(server.grpc, server)
 	healthgrpc.RegisterHealthServer(server.grpc, server)
 	logger.Infof("Infra Manager serving on %s://%s", types.ServerNetProto, managerAddr)
 	return server
@@ -252,20 +254,20 @@ func insertRule(log *log.Entry, ctx context.Context, p4RtC *client.Client, macAd
 	return true, err
 }
 
-func (s *ApiServer) CreateNetwork(ctx context.Context, in *proto.CreateNetworkRequest) (*proto.AddReply, error) {
+func (s *ApiServer) CreateNetwork(ctx context.Context, in *proto.CreateNetworkRequest) (*proto.InfraAddReply, error) {
 	var err error
 
 	logger := s.log.WithField("func", "CreateNetwork")
 	logger.Infof("Incoming Add request %s", in.String())
 
-	out := &proto.AddReply{
-		HostInterfaceName: in.AddRequest.DesiredHostInterfaceName,
+	out := &proto.InfraAddReply{
+		HostInterfaceName: in.DesiredHostInterfaceName,
 		Successful:        true,
 	}
 
 	server := NewApiServer()
 
-	ipAddr := strings.Split(in.AddRequest.ContainerIps[0].Address, "/")[0]
+	ipAddr := strings.Split(in.ContainerIps[0].Address, "/")[0]
 	macAddr := in.MacAddr
 	//TODO: Extract the portId from mac.
 	// Temporary: Always send to port 0
@@ -285,13 +287,13 @@ func (s *ApiServer) CreateNetwork(ctx context.Context, in *proto.CreateNetworkRe
 	return out, err
 }
 
-func (s *ApiServer) DeleteNetwork(ctx context.Context, in *proto.DeleteNetworkRequest) (*proto.DelReply, error) {
+func (s *ApiServer) DeleteNetwork(ctx context.Context, in *proto.DeleteNetworkRequest) (*proto.Reply, error) {
 	var err error
 
 	logger := s.log.WithField("func", "DeleteNetwork")
 	logger.Infof("Incoming Del request %s", in.String())
 
-	out := &proto.DelReply{
+	out := &proto.Reply{
 		Successful: true,
 	}
 

@@ -13,7 +13,8 @@ import (
 	"github.com/ipdk-io/k8s-infra-offload/pkg/pool"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/utils"
-	"github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/sirupsen/logrus"
@@ -32,7 +33,7 @@ var (
 	mask         = net.CIDRMask(24, 32)
 	testIfIndex  = 424242
 	mockCrtl     *gomock.Controller
-	mockClient   *mock_proto.MockInfraAgentClient
+	mockClient   *mock_proto.MockInfraCniClient
 	listener     *bufconn.Listener
 	globalTestNs ns.NetNS
 	tempDir      string
@@ -40,7 +41,7 @@ var (
 
 func TestUtils(t *testing.T) {
 	mockCrtl = gomock.NewController(t)
-	mockClient = mock_proto.NewMockInfraAgentClient(mockCrtl)
+	mockClient = mock_proto.NewMockInfraCniClient(mockCrtl)
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Netconf Test Suite")
 }
@@ -464,8 +465,15 @@ var _ = Describe("netconf", func() {
 			configureHostInterfaceFunc = fakeConfigureHostInterface
 			pi, err := NewTapPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
-			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.AddReply{Successful: false}, errors.New("Error")))
+			var done = false
+			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).DoAndReturn(func(_ interface{}, _ interface{}, _ ...interface{}) (*proto.InfraAddReply, error) {
+				done = true
+				return &proto.InfraAddReply{Successful: false, ErrorMessage: "test error"}, errors.New("test error")
+			}))
 			_, err = pi.SetupNetwork(context.TODO(), mockClient, &types.InterfaceInfo{}, &proto.AddRequest{})
+			Eventually(func() bool {
+				return done
+			}).Should(BeTrue())
 			Expect(err).To(HaveOccurred())
 		})
 		var _ = It("return error if cannot create network", func() {
@@ -474,7 +482,7 @@ var _ = Describe("netconf", func() {
 			configureHostInterfaceFunc = fakeConfigureHostInterface
 			pi, err := NewTapPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
-			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.AddReply{Successful: true}, nil))
+			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.InfraAddReply{Successful: true}, nil))
 			_, err = pi.SetupNetwork(context.TODO(), mockClient, &types.InterfaceInfo{}, &proto.AddRequest{})
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -548,7 +556,7 @@ var _ = Describe("netconf", func() {
 			linkByName = fakeLinkByName
 			addrList = fakeAddrList
 			withNetNSPath = fakeWithNetNSPath
-			gomock.InOrder(mockClient.EXPECT().DeleteNetwork(gomock.Any(), gomock.Any()).Return(&proto.DelReply{Successful: true}, nil))
+			gomock.InOrder(mockClient.EXPECT().DeleteNetwork(gomock.Any(), gomock.Any()).Return(&proto.Reply{Successful: true}, nil))
 			_, err = pi.ReleaseNetwork(context.TODO(), mockClient, &proto.DelRequest{})
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -957,14 +965,14 @@ var _ = Describe("netconf", func() {
 		var _ = It("return error if cannot setup network", func() {
 			pi, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
-			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.AddReply{Successful: false}, errors.New("Fake error on CreateNetwork")))
+			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.InfraAddReply{Successful: false}, errors.New("Fake error on CreateNetwork")))
 			_, err = pi.SetupNetwork(context.TODO(), mockClient, &types.InterfaceInfo{}, &proto.AddRequest{})
 			Expect(err).To(HaveOccurred())
 		})
 		var _ = It("return no error", func() {
 			pi, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
-			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.AddReply{Successful: true}, nil))
+			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.InfraAddReply{Successful: true}, nil))
 			_, err = pi.SetupNetwork(context.TODO(), mockClient, &types.InterfaceInfo{}, &proto.AddRequest{})
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -1021,7 +1029,7 @@ var _ = Describe("netconf", func() {
 			addrList = fakeAddrList
 			pi, err := NewSriovPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
-			gomock.InOrder(mockClient.EXPECT().DeleteNetwork(gomock.Any(), gomock.Any()).Return(&proto.DelReply{Successful: true}, nil))
+			gomock.InOrder(mockClient.EXPECT().DeleteNetwork(gomock.Any(), gomock.Any()).Return(&proto.Reply{Successful: true}, nil))
 			_, err = pi.ReleaseNetwork(context.TODO(), mockClient, &proto.DelRequest{})
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -1506,14 +1514,14 @@ var _ = Describe("netconf", func() {
 		var _ = It("return error if cannot create network", func() {
 			pi, err := NewIpvlanPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
-			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.AddReply{Successful: false}, errors.New("Error")))
+			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.InfraAddReply{Successful: false}, errors.New("Error")))
 			_, err = pi.SetupNetwork(context.TODO(), mockClient, nil, &proto.AddRequest{DesiredHostInterfaceName: "dummyDesired"})
 			Expect(err).To(HaveOccurred())
 		})
 		var _ = It("return error no error", func() {
 			pi, err := NewIpvlanPodInterface(logrus.NewEntry(logrus.New()))
 			Expect(err).ToNot(HaveOccurred())
-			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.AddReply{Successful: true}, nil))
+			gomock.InOrder(mockClient.EXPECT().CreateNetwork(gomock.Any(), gomock.Any()).Return(&proto.InfraAddReply{Successful: true}, nil))
 			_, err = pi.SetupNetwork(context.TODO(), mockClient, nil, &proto.AddRequest{DesiredHostInterfaceName: "dummyDesired"})
 			Expect(err).ToNot(HaveOccurred())
 		})
@@ -1870,7 +1878,7 @@ func fakeGrpcDialErr(target string, opts ...grpc.DialOption) (*grpc.ClientConn, 
 	return nil, errors.New("Fake error on grpcDial")
 }
 
-func newFakeClient(cc *grpc.ClientConn) proto.InfraAgentClient {
+func newFakeClient(cc *grpc.ClientConn) proto.InfraCniClient {
 	return mockClient
 }
 

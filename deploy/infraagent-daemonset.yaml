@@ -68,7 +68,7 @@ spec:
       containers:
       - name: agent
         image: infraagent:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         securityContext:
           runAsUser: 0
           privileged: true

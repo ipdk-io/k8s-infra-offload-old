@@ -18,7 +18,8 @@ import (
 	"context"
 
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
-	pb "github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
+
 	"github.com/sirupsen/logrus"
 	"github.com/vishvananda/netlink"
 )
@@ -34,7 +35,7 @@ func NewIpvlanPodInterface(log *logrus.Entry) (types.PodInterface, error) {
 	return &ipvlanPodInterface{log: log, master: types.NodeInterfaceName, mode: netlink.IPVLAN_MODE_L3}, nil
 }
 
-func (p *ipvlanPodInterface) CreatePodInterface(in *pb.AddRequest) (*types.InterfaceInfo, error) {
+func (p *ipvlanPodInterface) CreatePodInterface(in *proto.AddRequest) (*types.InterfaceInfo, error) {
 
 	contMac, err := DoIpvlanNetwork(in, p.master, p.mode)
 	if err != nil {
@@ -47,14 +48,22 @@ func (p *ipvlanPodInterface) CreatePodInterface(in *pb.AddRequest) (*types.Inter
 	return intfInfo, nil
 }
 
-func (p *ipvlanPodInterface) ReleasePodInterface(in *pb.DelRequest) error {
+func (p *ipvlanPodInterface) ReleasePodInterface(in *proto.DelRequest) error {
 	return ReleaseIpvlanNetwork(in)
 }
 
-func (p *ipvlanPodInterface) SetupNetwork(ctx context.Context, c pb.InfraAgentClient, intfInfo *types.InterfaceInfo, in *pb.AddRequest) (*pb.AddReply, error) {
-	request := &pb.CreateNetworkRequest{
-		AddRequest: in,
-		HostIfName: in.DesiredHostInterfaceName,
+func (p *ipvlanPodInterface) SetupNetwork(ctx context.Context, c proto.InfraCniClient, intfInfo *types.InterfaceInfo, in *proto.AddRequest) (*proto.AddReply, error) {
+	cips := make([]*proto.IPConfiguration, 0)
+	for _, e := range in.ContainerIps {
+		cips = append(cips, &proto.IPConfiguration{
+			Address: e.Address,
+			Gateway: e.Gateway,
+		})
+	}
+	request := &proto.CreateNetworkRequest{
+		ContainerIps:             cips,
+		HostIfName:               in.DesiredHostInterfaceName,
+		DesiredHostInterfaceName: in.DesiredHostInterfaceName,
 	}
 
 	// Note: We may need to call different InfraAgentClient method for IPVLAN with different payloads
@@ -63,10 +72,13 @@ func (p *ipvlanPodInterface) SetupNetwork(ctx context.Context, c pb.InfraAgentCl
 		return nil, err
 	}
 
-	return out, nil
+	return &proto.AddReply{
+		Successful:   out.Successful,
+		ErrorMessage: out.ErrorMessage,
+	}, nil
 }
 
-func (p *ipvlanPodInterface) ReleaseNetwork(ctx context.Context, c pb.InfraAgentClient, in *pb.DelRequest) (*pb.DelReply, error) {
+func (p *ipvlanPodInterface) ReleaseNetwork(ctx context.Context, c proto.InfraCniClient, in *proto.DelRequest) (*proto.DelReply, error) {
 	// Stub implementation
 	return nil, nil
 }

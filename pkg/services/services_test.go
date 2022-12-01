@@ -61,7 +61,7 @@ var (
 	endpointsList *v1.EndpointsList
 	nodeList      *v1.NodeList
 	mockCrtl      *gomock.Controller
-	mockClient    *mock_proto.MockInfraAgentClient
+	mockClient    *mock_proto.MockInfraServicesClient
 	listener      *bufconn.Listener
 	fakeClient    *fake.Clientset
 	testEnv       *envtest.Environment
@@ -77,7 +77,7 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 
 func TestServices(t *testing.T) {
 	mockCrtl = gomock.NewController(t)
-	mockClient = mock_proto.NewMockInfraAgentClient(mockCrtl)
+	mockClient = mock_proto.NewMockInfraServicesClient(mockCrtl)
 	testEnv = &envtest.Environment{
 		// CRDDirectoryPaths: []string{filepath.Join("..", "config", "crd", "bases")},
 	}
@@ -139,7 +139,7 @@ var _ = Describe("proxy", func() {
 		grpcDial = func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 			return grpc.DialContext(context.TODO(), "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithTransportCredentials(insecure.NewCredentials()))
 		}
-		newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraAgentClient {
+		newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraServicesClient {
 			return mockClient
 		}
 	})
@@ -477,7 +477,7 @@ var _ = Describe("NAT settings handler", func() {
 		grpcDial = func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 			return grpc.DialContext(context.TODO(), "bufnet", grpc.WithContextDialer(bufDialer), grpc.WithTransportCredentials(insecure.NewCredentials()))
 		}
-		newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraAgentClient {
+		newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraServicesClient {
 			return mockClient
 		}
 		fakeClient = fake.NewSimpleClientset(nodeList, servicesList, endpointsList)

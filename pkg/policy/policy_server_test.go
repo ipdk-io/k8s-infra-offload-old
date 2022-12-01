@@ -13,7 +13,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/mock_proto"
-	"github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/sirupsen/logrus"
@@ -26,7 +26,7 @@ const bufSize = 1024 * 1024
 
 var (
 	mockCrtl       *gomock.Controller
-	mockClient     *mock_proto.MockInfraAgentClient
+	mockClient     *mock_proto.MockInfraPolicyClient
 	grpcListener   *bufconn.Listener
 	socketListener *bufconn.Listener
 	ts             *testing.T
@@ -166,7 +166,7 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 }
 
 var _ = BeforeSuite(func() {
-	pbNewInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraAgentClient {
+	newInfraAgentClient = func(cc *grpc.ClientConn) proto.InfraPolicyClient {
 		return mockClient
 	}
 
@@ -226,7 +226,7 @@ var _ = Describe("policy", func() {
 		grpcListener = bufconn.Listen(bufSize)
 		socketListener = bufconn.Listen(bufSize)
 		mockCrtl = gomock.NewController(ts)
-		mockClient = mock_proto.NewMockInfraAgentClient(mockCrtl)
+		mockClient = mock_proto.NewMockInfraPolicyClient(mockCrtl)
 	})
 
 	var _ = AfterEach(func() {

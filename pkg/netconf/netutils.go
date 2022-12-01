@@ -50,7 +50,7 @@ var (
 	linkSetNsFd                     = netlink.LinkSetNsFd
 	linkSetUp                       = netlink.LinkSetUp
 	movePodInterfaceToHostNetnsFunc = movePodInterfaceToHostNetns
-	newInfraAgentClient             = pb.NewInfraAgentClient
+	newInfraAgentClient             = pb.NewInfraCniClient
 	readInterfaceConf               = utils.ReadInterfaceConf
 	releaseIPFromIPAM               = utils.ReleaseIPFromIPAM
 	routeAdd                        = netlink.RouteAdd
@@ -214,12 +214,6 @@ func sendSetupHostInterface(request *pb.SetupHostInterfaceRequest) error {
 		return err
 	}
 	defer conn.Close()
-	// defer func() {
-	// 	if conn == nil {
-	// 		return
-	// 	}
-	// 	_ = conn.Close()
-	// }()
 	c := newInfraAgentClient(conn)
 	r, err := c.SetupHostInterface(context.TODO(), request)
 	if err != nil {
