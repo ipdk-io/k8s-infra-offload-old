@@ -26,7 +26,11 @@ func fakewritefile(fn string, data []byte, permission fs.FileMode) error {
 }
 
 func fakereadfile(fn string) ([]byte, error) {
+<<<<<<< HEAD
 	return []byte{}, errors.New("Reading from file failed")
+=======
+	return []byte{}, errors.New("VISH:Reading from file failed")
+>>>>>>> 393be37 (unit test for store package)
 }
 
 func fakeopenfile(name string, flag int, perm fs.FileMode) (*os.File, error) {
@@ -82,7 +86,11 @@ var _ = Describe("Storeendpoint", func() {
 			})
 
 			It("returns true if flag is true/false", func() {
+<<<<<<< HEAD
 				ret := store.InitEndPointStore(false)
+=======
+				ret := store.InitEndPointStore(true)
+>>>>>>> 393be37 (unit test for store package)
 				Expect(ret).To(Equal(true))
 			})
 
@@ -126,7 +134,11 @@ var _ = Describe("Storeendpoint", func() {
 				store.NewEndPoint()
 			})
 
+<<<<<<< HEAD
 			It("writes the data to the store if data is valid and returns true", func() {
+=======
+			It("writes the data to the store if data is valud and returns true", func() {
+>>>>>>> 393be37 (unit test for store package)
 				data_valid := store.EndPoint{
 					PodIpAddress:  "10.10.10.2",
 					InterfaceID:   2,
@@ -232,7 +244,11 @@ var _ = Describe("Storeendpoint", func() {
 				Expect(ret).To(Equal(data_valid))
 			})
 
+<<<<<<< HEAD
 			It("returns nil when pod ip address is invalid", func() {
+=======
+			It("returns error when pod ip address is invalid", func() {
+>>>>>>> 393be37 (unit test for store package)
 				data_invalid1 := store.EndPoint{
 					PodIpAddress:  "10.df.90.jh",
 					InterfaceID:   1,
@@ -242,7 +258,11 @@ var _ = Describe("Storeendpoint", func() {
 				Expect(ret).Should(BeNil())
 			})
 
+<<<<<<< HEAD
 			It("returns nil when mac address is invalid", func() {
+=======
+			It("returns error when mac address is invalid", func() {
+>>>>>>> 393be37 (unit test for store package)
 				data_invalid3 := store.EndPoint{
 					PodIpAddress:  "10.10.10.1",
 					InterfaceID:   1,
@@ -254,7 +274,11 @@ var _ = Describe("Storeendpoint", func() {
 
 			It("returns nil when input is valid but data is not present", func() {
 				data_no_hit := store.EndPoint{
+<<<<<<< HEAD
 					PodIpAddress:  "10.10.10.8",
+=======
+					PodIpAddress:  "10.10.10.4",
+>>>>>>> 393be37 (unit test for store package)
 					InterfaceID:   4,
 					PodMacAddress: "00:00:00:aa:aa:aa",
 				}
@@ -367,7 +391,11 @@ var _ = Describe("Storeservice", func() {
 			})
 
 			It("returns true when the flag is true/false", func() {
+<<<<<<< HEAD
 				ret := store.InitServiceStore(false)
+=======
+				ret := store.InitServiceStore(true)
+>>>>>>> 393be37 (unit test for store package)
 				Expect(ret).To(Equal(true))
 			})
 
@@ -611,7 +639,11 @@ var _ = Describe("Storeservice", func() {
 				Expect(ret).Should(BeNil())
 			})
 
+<<<<<<< HEAD
 			It("returns nil when input is invalid", func() {
+=======
+			It("returns false when input is invalid", func() {
+>>>>>>> 393be37 (unit test for store package)
 				ep1 := store.ServiceEndPoint{
 					IpAddress: "10.10.10.1",
 					Port:      8081,
@@ -673,7 +705,11 @@ var _ = Describe("Storeservice", func() {
 				store.JsonMarshalIndent = restorejsonmarshalindent
 			})
 
+<<<<<<< HEAD
 			It("returns true", func() {
+=======
+			It("return true", func() {
+>>>>>>> 393be37 (unit test for store package)
 				ret := store.RunSyncServiceInfo()
 				Expect(ret).To(Equal(true))
 			})
