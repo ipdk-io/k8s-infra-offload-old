@@ -356,10 +356,6 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 		return out, err
 	}
 
-	logger.Infof("Incoming NatTranslationAdd %+v", in)
-	logger.Infof("Service ip %v and port %v proto %v", in.Endpoint.Ipv4Addr, in.Endpoint.Port, in.Proto)
-	logger.Infof("Endpoints num %v", len(in.Backends))
-
 	/*
 		If there are no backend endpoints for the service,
 		nothing to program the pipeline. Simply return from
@@ -395,6 +391,10 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 		Update with new endpoints.
 	*/
 	if entry != nil {
+		logger.Infof("Incoming NatTranslationUpdate %+v", in)
+		logger.Infof("Service ip %v and port %v proto %v", in.Endpoint.Ipv4Addr, in.Endpoint.Port, in.Proto)
+		logger.Infof("Endpoints num %v", len(in.Backends))
+
 		service = entry.(store.Service)
 		if service.ClusterPort != in.Endpoint.Port {
 			logger.Errorf("Port mismatch for the service %v, old port: %v, new port : %v",
@@ -415,10 +415,15 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 		/*
 			New service. Add it to store
 		*/
+		logger.Infof("Incoming NatTranslationAdd %+v", in)
+		logger.Infof("Service ip %v and port %v proto %v", in.Endpoint.Ipv4Addr, in.Endpoint.Port, in.Proto)
+		logger.Infof("Endpoints num %v", len(in.Backends))
+
 		service = store.Service{
-			ClusterIp:    serviceIpAddr,
-			ClusterPort:  uint32(servicePort),
-			NumEndPoints: 0,
+			ClusterIp:       serviceIpAddr,
+			ClusterPort:     uint32(servicePort),
+			NumEndPoints:    0,
+			ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 		}
 	}
 
