@@ -1145,7 +1145,7 @@
 }ç™
 pipe ˆ{
   "program_name" : "k8s_dp",
-  "build_date" : "Wed Nov 16 07:37:42 2022",
+  "build_date" : "Mon Dec  5 00:50:42 2022",
   "compile_command" : "p4c-dpdk --arch pna -o ./pipe/k8s_dp.spec --p4runtime-files ./p4Info.txt --bf-rt-schema ./bfrt.json --context ./pipe/context.json ./k8s_dp.p4",
   "compiler_version" : "0.1 (SHA: bad00d940 BUILD: RELEASE)",
   "schema_version" : "0.1",
@@ -2657,7 +2657,7 @@ table arpt_to_port_table {
 	actions {
 		set_dest_vport
 	}
-	default_action set_dest_vport args p 0x0 const
+	default_action set_dest_vport args p 0x1 const
 	size 0x10000
 }
 
@@ -2669,7 +2669,7 @@ table ipv4_to_port_table {
 	actions {
 		set_dest_mac_vport
 	}
-	default_action set_dest_mac_vport args p 0x0 new_dmac 0x0 const
+	default_action set_dest_mac_vport args p 0x1 new_dmac 0x0 const
 	size 0x10000
 }
 
@@ -2681,7 +2681,7 @@ table mac_to_port_table {
 	actions {
 		set_dest_vport_1
 	}
-	default_action set_dest_vport_1 args p 0x0 const
+	default_action set_dest_vport_1 args p 0x1 const
 	size 0x10000
 }
 
