@@ -56,4 +56,5 @@ func ReadConfig(conf *Configuration, cfgFileName string) {
 	fmt.Println("P4 bin path \t", viper.GetString("P4BinPath"))
 	fmt.Println("EnableServices:\t", viper.GetInt(""))
 	fmt.Println("HostName:\t", viper.GetString("HostName"))
+	fmt.Println("NodeInterface:\t", viper.GetString("NodeInterface"))
 }

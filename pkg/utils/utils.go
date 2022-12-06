@@ -540,3 +540,30 @@ func CheckGrpcServerStatus(target string, log *log.Entry, grpcDial grpcDialType)
 	}
 	return resp.Status == healthpb.HealthCheckResponse_SERVING, nil
 }
+
+func GetIPFromIfaceName(ifaceName string) (ipAddr string, err error) {
+	if len(ifaceName) == 0 {
+		err = fmt.Errorf("Empty interface name")
+		return "", err
+	}
+
+	iface, err := net.InterfaceByName(ifaceName)
+	if err != nil {
+		return "", err
+	}
+
+	ipAddrs, err := iface.Addrs()
+	if err != nil {
+		return "", err
+	}
+
+	for _, addr := range ipAddrs {
+		netIP, ok := addr.(*net.IPNet)
+		if ok && !netIP.IP.IsLoopback() && netIP.IP.To4() != nil {
+			return netIP.IP.String(), nil
+		}
+	}
+
+	err = fmt.Errorf("No ip address set for %s", ifaceName)
+	return "", err
+}
