@@ -82,7 +82,7 @@ var _ = Describe("Storeendpoint", func() {
 			})
 
 			It("returns true if flag is true/false", func() {
-				ret := store.InitEndPointStore(true)
+				ret := store.InitEndPointStore(false)
 				Expect(ret).To(Equal(true))
 			})
 
@@ -254,7 +254,7 @@ var _ = Describe("Storeendpoint", func() {
 
 			It("returns nil when input is valid but data is not present", func() {
 				data_no_hit := store.EndPoint{
-					PodIpAddress:  "10.10.10.4",
+					PodIpAddress:  "10.10.10.8",
 					InterfaceID:   4,
 					PodMacAddress: "00:00:00:aa:aa:aa",
 				}
@@ -367,7 +367,7 @@ var _ = Describe("Storeservice", func() {
 			})
 
 			It("returns true when the flag is true/false", func() {
-				ret := store.InitServiceStore(true)
+				ret := store.InitServiceStore(false)
 				Expect(ret).To(Equal(true))
 			})
 
