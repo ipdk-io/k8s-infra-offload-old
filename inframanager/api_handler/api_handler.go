@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
+	"github.com/ipdk-io/k8s-infra-offload/pkg/utils"
 	"github.com/ipdk-io/k8s-infra-offload/proto"
 	"gopkg.in/tomb.v2"
 
@@ -710,11 +711,26 @@ func (s *ApiServer) SetupHostInterface(ctx context.Context, in *proto.SetupHostI
 
 	logger.Infof("Interface: %s, port id: %d", in.IfName, portID)
 
-	status, err := insertRule(s.log, ctx, server.p4RtC, macAddr,
-		ipAddr, int(portID), p4.HOST)
-	out.Successful = status
-
+	if status, err := insertRule(s.log, ctx, server.p4RtC, macAddr,
+		ipAddr, int(portID), p4.HOST); err != nil {
+		logger.Errorf("Failed to insert rule to the pipeline ip: %s mac: %s port id: %d err: %v",
+			ipAddr, macAddr, portID, err)
+		out.Successful = status
+		return out, err
+	}
 	hostInterfaceMac = macAddr
+
+	nodeIP, err := utils.GetIPFromIfaceName(config.NodeInterface)
+	if err != nil {
+		logger.Errorf("Failed to get ip address for interface: %s, err: %v",
+			config.NodeInterface, err)
+		out.Successful = false
+		return out, err
+	}
+
+	status, err := insertRule(s.log, ctx, server.p4RtC, hostInterfaceMac,
+		nodeIP, int(portID), p4.HOST)
+	out.Successful = status
 
 	return out, err
 }
