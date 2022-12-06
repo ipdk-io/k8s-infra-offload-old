@@ -40,6 +40,10 @@ func main() {
 
 	api.PutConf(config)
 
+	if err := api.GetNodeIP(); err != nil {
+		log.Fatalf("Failed to get the node IP address, err: %v", err)
+	}
+
 	p4InfoPath, err := filepath.Abs(config.P4InfoPath)
 	if err != nil {
 		log.Fatalf("Failed to get absolute representation of path %s",

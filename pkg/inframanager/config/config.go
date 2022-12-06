@@ -40,6 +40,7 @@ func ReadConfig(conf *Configuration, cfgFileName string) {
 	viper.SetDefault("DefaultDevice", 0)
 	viper.SetDefault("EnableService", 0)
 	viper.SetDefault("EnableRouting", 0)
+	viper.SetDefault("NodeInterface", "eno1")
 
 	err := viper.Unmarshal(conf)
 	if err != nil {
@@ -54,6 +55,7 @@ func ReadConfig(conf *Configuration, cfgFileName string) {
 	fmt.Println("P4 prog config file \t", viper.GetString("P4ProgConf"))
 	fmt.Println("P4Info path \t", viper.GetString("P4InfoPath"))
 	fmt.Println("P4 bin path \t", viper.GetString("P4BinPath"))
+	fmt.Println("P4 bin path \t", viper.GetString("NodeInterface"))
 	fmt.Println("EnableServices:\t", viper.GetInt(""))
 	fmt.Println("HostName:\t", viper.GetString("HostName"))
 	fmt.Println("NodeInterface:\t", viper.GetString("NodeInterface"))

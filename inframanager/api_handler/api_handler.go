@@ -44,9 +44,15 @@ import (
 
 var config *conf.Configuration
 var hostInterfaceMac string
+var nodeIPAddress string
 
 func PutConf(c *conf.Configuration) {
 	config = c
+}
+
+func GetNodeIP() (err error) {
+	nodeIPAddress, err = utils.GetIPFromIfaceName(config.NodeInterface)
+	return
 }
 
 type ApiServer struct {
@@ -720,16 +726,15 @@ func (s *ApiServer) SetupHostInterface(ctx context.Context, in *proto.SetupHostI
 	}
 	hostInterfaceMac = macAddr
 
-	nodeIP, err := utils.GetIPFromIfaceName(config.NodeInterface)
-	if err != nil {
-		logger.Errorf("Failed to get ip address for interface: %s, err: %v",
-			config.NodeInterface, err)
+	if len(nodeIPAddress) == 0 {
+		logger.Errorf("No node ip address configured")
+		err = fmt.Errorf("No node ip address configured")
 		out.Successful = false
 		return out, err
 	}
 
 	status, err := insertRule(s.log, ctx, server.p4RtC, hostInterfaceMac,
-		nodeIP, int(portID), p4.HOST)
+		nodeIPAddress, int(portID), p4.HOST)
 	out.Successful = status
 
 	return out, err
