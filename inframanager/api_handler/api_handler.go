@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
-	"github.com/ipdk-io/k8s-infra-offload/pkg/utils"
 	"github.com/ipdk-io/k8s-infra-offload/proto"
 	"gopkg.in/tomb.v2"
 
@@ -44,15 +43,9 @@ import (
 
 var config *conf.Configuration
 var hostInterfaceMac string
-var nodeIPAddress string
 
 func PutConf(c *conf.Configuration) {
 	config = c
-}
-
-func GetNodeIP() (err error) {
-	nodeIPAddress, err = utils.GetIPFromIfaceName(config.NodeInterface)
-	return
 }
 
 type ApiServer struct {
@@ -730,7 +723,7 @@ func (s *ApiServer) SetupHostInterface(ctx context.Context, in *proto.SetupHostI
 	}
 	hostInterfaceMac = macAddr
 
-	if len(nodeIPAddress) == 0 {
+	if len(config.NodeIP) == 0 {
 		logger.Errorf("No node ip address configured")
 		err = fmt.Errorf("No node ip address configured")
 		out.Successful = false
@@ -738,7 +731,7 @@ func (s *ApiServer) SetupHostInterface(ctx context.Context, in *proto.SetupHostI
 	}
 
 	status, err := insertRule(s.log, ctx, server.p4RtC, hostInterfaceMac,
-		nodeIPAddress, int(portID), p4.HOST)
+		config.NodeIP, int(portID), p4.HOST)
 	out.Successful = status
 
 	return out, err

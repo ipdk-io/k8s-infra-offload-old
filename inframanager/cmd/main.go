@@ -23,6 +23,7 @@ import (
 
 	conf "github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/config"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/store"
+	"github.com/ipdk-io/k8s-infra-offload/pkg/utils"
 
 	"github.com/antoninbas/p4runtime-go-client/pkg/client"
 	"github.com/antoninbas/p4runtime-go-client/pkg/signals"
@@ -38,11 +39,13 @@ func main() {
 		log.Fatalf("Missing .bin or P4Info")
 	}
 
-	api.PutConf(config)
-
-	if err := api.GetNodeIP(); err != nil {
+	ip, err := utils.GetNodeIPFromEnv()
+	if err != nil {
 		log.Fatalf("Failed to get the node IP address, err: %v", err)
 	}
+	config.NodeIP = ip
+
+	api.PutConf(config)
 
 	p4InfoPath, err := filepath.Abs(config.P4InfoPath)
 	if err != nil {
