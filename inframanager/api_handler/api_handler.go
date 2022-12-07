@@ -732,6 +732,10 @@ func (s *ApiServer) SetupHostInterface(ctx context.Context, in *proto.SetupHostI
 
 	status, err := insertRule(s.log, ctx, server.p4RtC, hostInterfaceMac,
 		config.NodeIP, int(portID), p4.HOST)
+	if err != nil {
+		logger.Errorf("Failed to insert rule to the pipeline ip: %s mac: %s port id: %d err: %v",
+			config.NodeIP, macAddr, portID, err)
+	}
 	out.Successful = status
 
 	return out, err
