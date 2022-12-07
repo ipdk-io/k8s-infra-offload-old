@@ -241,8 +241,26 @@ func CreateServer(log *log.Entry) *ApiServer {
 
 func InsertDefaultRule() {
 	server := NewApiServer()
-	p4.ArptToPortTable(context.Background(), server.p4RtC, types.DefaultRoute,
-		types.ArpProxyDefaultPort, true)
+
+	cidr := strings.Split(types.DefaultRoute, "/")
+	if len(cidr) != 2 {
+		log.Errorf("Invalid default route: %s, cannot program default gateway",
+			types.DefaultRoute)
+		return
+	}
+
+	ip := cidr[0]
+	if len(ip) == 0 {
+		log.Errorf("Empty value: %s, cannot program default gateway",
+			types.DefaultRoute)
+		return
+	}
+
+	log.Infof("Inserting default gateway rule for arp-proxy route")
+	if err := p4.ArptToPortTable(context.Background(), server.p4RtC, ip,
+		types.ArpProxyDefaultPort, true); err != nil {
+		log.Errorf("Failed to insert the default rule for arp-proxy")
+	}
 }
 
 func (s *ApiServer) Start(t *tomb.Tomb) {

@@ -106,7 +106,14 @@ func main() {
 
 	// Starting inframanager gRPC server
 	waitCh := make(chan struct{})
+
+	//Create a new manager object
 	mgr.NewManager()
+
+	/*
+		Start the api server and program the default gateway rule
+		for arp-proxy
+	*/
 	go mgr.Run(stopCh, waitCh)
 
 	// Wait till manager is exited
