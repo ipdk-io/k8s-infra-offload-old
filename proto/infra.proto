@@ -1,20 +1,29 @@
 syntax = "proto3";
 package infra;
-option go_package="proto";
+option go_package = "proto";
 
-import "cnibackend.proto";
 import "felixbackend.proto";
 
-service InfraAgent {
-    rpc CreateNetwork(CreateNetworkRequest) returns (cni.AddReply) {}
-    rpc DeleteNetwork(DeleteNetworkRequest) returns (cni.DelReply) {}
-    rpc SetupHostInterface(SetupHostInterfaceRequest) returns (Reply) {}
 
+message Reply {
+    bool successful = 1;
+    string error_message = 2;
+}
+
+service InfraCni {
+    rpc CreateNetwork(CreateNetworkRequest) returns (InfraAddReply) {}
+    rpc DeleteNetwork(DeleteNetworkRequest) returns (Reply) {}
+    rpc SetupHostInterface(SetupHostInterfaceRequest) returns (Reply) {}
+}
+
+service InfraServices {
     rpc NatTranslationAdd(NatTranslation) returns (Reply) {}
     rpc SetSnatAddress(SetSnatAddressRequest) returns (Reply) {}
     rpc AddDelSnatPrefix(AddDelSnatPrefixRequest) returns (Reply) {}
     rpc NatTranslationDelete(NatTranslation) returns (Reply) {}
+}
 
+service InfraPolicy {
     rpc ActivePolicyUpdate(felix.ActivePolicyUpdate) returns (Reply) {}
     rpc ActivePolicyRemove(felix.ActivePolicyRemove) returns (Reply) {}
     rpc UpdateIPSet(felix.IPSetUpdate) returns (Reply) {}
@@ -58,11 +67,6 @@ message NatTranslation {
     repeated NatEndpointTuple backends = 6;
 }
 
-message Reply {
-    bool successful = 1;
-    string error_message = 2;
-}
-
 message SetSnatAddressRequest {
     string snat_ipv4 = 1;
     string snat_ipv6 = 2;
@@ -74,13 +78,14 @@ message AddDelSnatPrefixRequest {
 }
 
 message CreateNetworkRequest {
-    cni.AddRequest add_request = 1;
-    string host_if_name = 2;
-    string mac_addr = 3;
+    repeated IPConfiguration container_ips  = 1;
+    string desired_host_interface_name = 2;
+    string host_if_name = 3;
+    string mac_addr = 4;
 }
 
 message DeleteNetworkRequest {
-    cni.DelRequest del_request = 1;
+    string interface_name = 1;
     string host_if_name = 2;
     string mac_addr = 3;
     string ipv4_addr = 4;
@@ -90,4 +95,15 @@ message SetupHostInterfaceRequest {
     string if_name = 1;
     string ipv4_addr = 2;
     string mac_addr = 3;
+}
+
+message IPConfiguration {
+    string address = 1;
+    string gateway = 2;
+}
+
+message InfraAddReply {
+    bool successful = 1;
+    string error_message = 2;
+    string host_interface_name = 3;
 }

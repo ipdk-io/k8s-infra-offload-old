@@ -24,7 +24,8 @@ import (
 	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/netconf"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
-	pb "github.com/ipdk-io/k8s-infra-offload/proto"
+
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -51,7 +52,7 @@ type CniServer struct {
 var (
 	newPodInterface     = netconf.NewPodInterface
 	grpcDial            = grpc.Dial
-	newInfraAgentClient = pb.NewInfraAgentClient
+	newInfraAgentClient = proto.NewInfraCniClient
 
 	listenFunc = net.Listen
 	getNSFunc  = ns.GetNS
@@ -85,7 +86,7 @@ func NewCniServer(log *log.Entry, t, uri string, serveFunc func() error) (types.
 	}
 
 	healthgrpc.RegisterHealthServer(server.grpc, server)
-	pb.RegisterCniDataplaneServer(server.grpc, server)
+	proto.RegisterCniDataplaneServer(server.grpc, server)
 	return server, nil
 }
 
@@ -128,10 +129,10 @@ func (s *CniServer) StopServer() {
 	types.CNIServerStatus = types.ServerStatusStopped
 }
 
-func (s *CniServer) Add(ctx context.Context, in *pb.AddRequest) (*pb.AddReply, error) {
+func (s *CniServer) Add(ctx context.Context, in *proto.AddRequest) (*proto.AddReply, error) {
 	s.log.Infof("CNI Add request:%s", in.String())
 
-	out := &pb.AddReply{Successful: false}
+	out := &proto.AddReply{Successful: false}
 	intfInfo, err := s.podInterface.CreatePodInterface(in)
 	if err != nil {
 		out.ErrorMessage = err.Error()
@@ -153,7 +154,7 @@ func (s *CniServer) Add(ctx context.Context, in *pb.AddRequest) (*pb.AddReply, e
 	if err != nil || !mgrRply.Successful {
 		// We should release allocated interface here on error
 		s.log.WithError(err).Error("Failed to configure interface via infra-manager, releasing allocated Pod interface")
-		_ = s.podInterface.ReleasePodInterface(&pb.DelRequest{Netns: in.Netns, InterfaceName: in.InterfaceName})
+		_ = s.podInterface.ReleasePodInterface(&proto.DelRequest{Netns: in.Netns, InterfaceName: in.InterfaceName})
 		out.ErrorMessage = "Failed to configure interface via infra-manager CNI service"
 		return out, err
 	}
@@ -166,10 +167,10 @@ func (s *CniServer) Add(ctx context.Context, in *pb.AddRequest) (*pb.AddReply, e
 	return out, err
 }
 
-func (s *CniServer) Del(ctx context.Context, in *pb.DelRequest) (*pb.DelReply, error) {
+func (s *CniServer) Del(ctx context.Context, in *proto.DelRequest) (*proto.DelReply, error) {
 	logger := log.WithField("func", "Del")
 	logger.Infof("CNI Del request: %v netns %s", in.String(), in.GetNetns())
-	out := &pb.DelReply{
+	out := &proto.DelReply{
 		Successful: true,
 	}
 

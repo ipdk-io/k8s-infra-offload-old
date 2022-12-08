@@ -21,7 +21,7 @@ import (
 
 	"github.com/ipdk-io/k8s-infra-offload/pkg/types"
 
-	pb "github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -29,7 +29,7 @@ import (
 
 var (
 	grpcDial            = grpc.Dial
-	newInfraAgentClient = pb.NewInfraAgentClient
+	newInfraAgentClient = proto.NewInfraServicesClient
 )
 
 type ServiceHandler struct {
@@ -40,7 +40,7 @@ func NewNatServiceHandler(log *logrus.Entry) *ServiceHandler {
 	return &ServiceHandler{log: log}
 }
 
-func (s *ServiceHandler) dialManager() (pb.InfraAgentClient, *grpc.ClientConn, error) {
+func (s *ServiceHandler) dialManager() (proto.InfraServicesClient, *grpc.ClientConn, error) {
 	managerAddr := fmt.Sprintf("%s:%s", types.InfraManagerAddr, types.InfraManagerPort)
 	s.log.Info("dialer using manager address: ", managerAddr)
 	conn, err := grpcDial(managerAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -51,7 +51,7 @@ func (s *ServiceHandler) dialManager() (pb.InfraAgentClient, *grpc.ClientConn, e
 	return newInfraAgentClient(conn), conn, nil
 }
 
-func (s *ServiceHandler) NatTranslationAdd(translation *pb.NatTranslation) error {
+func (s *ServiceHandler) NatTranslationAdd(translation *proto.NatTranslation) error {
 	s.log.Infof("NatTranslationAdd endpoint %v", translation)
 	c, conn, err := s.dialManager()
 	if err != nil {
@@ -76,7 +76,7 @@ func (s *ServiceHandler) SetSnatAddress(ip string) error {
 		return err
 	}
 	defer conn.Close()
-	reply, _ := c.SetSnatAddress(context.TODO(), &pb.SetSnatAddressRequest{SnatIpv4: ip, SnatIpv6: ""})
+	reply, _ := c.SetSnatAddress(context.TODO(), &proto.SetSnatAddressRequest{SnatIpv4: ip, SnatIpv6: ""})
 	if !reply.Successful {
 		return errors.New(reply.ErrorMessage)
 	}
@@ -90,14 +90,14 @@ func (s *ServiceHandler) AddDelSnatPrefix(ip string, isAdd bool) error {
 		return err
 	}
 	defer conn.Close()
-	reply, _ := c.AddDelSnatPrefix(context.TODO(), &pb.AddDelSnatPrefixRequest{IsAdd: isAdd, Prefix: ip})
+	reply, _ := c.AddDelSnatPrefix(context.TODO(), &proto.AddDelSnatPrefixRequest{IsAdd: isAdd, Prefix: ip})
 	if !reply.Successful {
 		return errors.New(reply.ErrorMessage)
 	}
 	return nil
 }
 
-func (s *ServiceHandler) NatTranslationDelete(translation *pb.NatTranslation) error {
+func (s *ServiceHandler) NatTranslationDelete(translation *proto.NatTranslation) error {
 	s.log.Infof("NatTranslationDelete %v", translation)
 	c, conn, err := s.dialManager()
 	if err != nil {

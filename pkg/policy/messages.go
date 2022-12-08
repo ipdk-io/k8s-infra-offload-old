@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// COPIED FROM vpp-dataplane project
-
 package policy
 
 import (
@@ -23,7 +21,7 @@ import (
 	"net"
 
 	pb "github.com/gogo/protobuf/proto"
-	"github.com/ipdk-io/k8s-infra-offload/proto"
+	proto "github.com/ipdk-io/k8s-infra-offload/proto"
 )
 
 func (s *PolicyServer) RecvMessage(conn net.Conn) (msg interface{}, err error) {
