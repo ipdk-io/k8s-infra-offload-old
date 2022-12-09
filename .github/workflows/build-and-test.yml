@@ -26,7 +26,12 @@ jobs:
       with:
         go-version: 1.19.1
 
-    - name: "Build"
+    - name: Change Permissions
+      run: |
+       sudo chmod 775 -R /var/lib/cni
+       ls -ltr /var/lib/cni
+
+    - name: Build
       run: make
 
     - name: Change Permissions
