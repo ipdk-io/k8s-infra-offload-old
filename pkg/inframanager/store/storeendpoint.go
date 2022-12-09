@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	storeFile = storePath + "cni_db.json"
+	StoreEpFile = storePath + "cni_db.json"
 )
 
 func IsEndPointStoreEmpty() bool {

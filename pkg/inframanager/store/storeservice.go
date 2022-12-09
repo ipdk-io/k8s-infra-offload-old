@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	servicesFile = storePath + "services_db.json"
+	ServicesFile = storePath + "services_db.json"
 )
 
 func IsServiceStoreEmpty() bool {
