@@ -338,7 +338,7 @@ tables {
     id: 2
     name: "hdr.ipv4.protocol"
     bitwidth: 8
-    match_type: EXACT
+    match_type: LPM
   }
   action_refs {
     id: 23429194
