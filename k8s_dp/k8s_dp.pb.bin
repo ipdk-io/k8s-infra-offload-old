@@ -1,5 +1,5 @@
 
-k8s_dp•”{
+k8s_dp“”{
   "schema_version" : "1.0.0",
   "tables" : [
     {
@@ -867,7 +867,7 @@
           "repeated" : false,
           "annotations" : [],
           "mandatory" : false,
-          "match_type" : "Exact",
+          "match_type" : "LPM",
           "type" : {
             "type" : "bytes",
             "width" : 8
@@ -2630,10 +2630,10 @@
     }
   ],
   "learn_filters" : []
-}½ñ
-pipe›•{
+}äî
+pipe™•{
   "program_name" : "k8s_dp",
-  "build_date" : "Fri Dec  9 06:28:12 2022",
+  "build_date" : "Fri Dec  9 06:53:28 2022",
   "compile_command" : "p4c-dpdk --arch pna -o ./pipe/k8s_dp.spec --p4runtime-files ./p4Info.txt --bf-rt-schema ./bfrt.json --context ./pipe/context.json ./k8s_dp.p4",
   "compiler_version" : "0.1 (SHA: 8313984e7 BUILD: RELEASE)",
   "schema_version" : "0.1",
@@ -3776,7 +3776,7 @@
           "name" : "hdr.ipv4.protocol",
           "instance_name" : "hdr.ipv4",
           "field_name" : "protocol",
-          "match_type" : "exact",
+          "match_type" : "lpm",
           "start_bit" : 0,
           "bit_width" : 8,
           "bit_width_full" : 8,
@@ -5489,7 +5489,7 @@
       }
     }
   ]
-}ŽÜ
+}·Ù
 
 
 
@@ -5805,8 +5805,6 @@ struct main_metadata_t {
 	bit<16> k8s_dp_control_set_meta_tcp_tcp_dst_port
 	bit<32> k8s_dp_control_set_meta_udp_ipv4_dst_addr
 	bit<16> k8s_dp_control_set_meta_udp_udp_dst_port
-	bit<32> k8s_dp_control_acl_dstip_proto_table_ipv4_dst_addr
-	bit<8> k8s_dp_control_acl_dstip_proto_table_ipv4_protocol
 	bit<32> k8s_dp_control_acl_src_ipset_table_ipv4_src_addr
 	bit<32> k8s_dp_control_acl_dst_ipset_table_ipv4_dst_addr
 	bit<8> MainControlT_tmp
@@ -6934,8 +6932,8 @@ table acl_srcip_proto_table {
 
 table acl_dstip_proto_table {
 	key {
-		m.k8s_dp_control_acl_dstip_proto_table_ipv4_dst_addr exact
-		m.k8s_dp_control_acl_dstip_proto_table_ipv4_protocol exact
+		h.ipv4.dst_addr exact
+		h.ipv4.protocol lpm
 	}
 	actions {
 		set_status_lookup_ipset_only_1
@@ -7339,8 +7337,6 @@ apply {
 	jmp LABEL_END_24
 	LABEL_FALSE_24 :	jmpnv LABEL_END_25 h.ipv4
 	jmpneq LABEL_END_25 m.local_metadata_direction 0x0
-	mov m.k8s_dp_control_acl_dstip_proto_table_ipv4_dst_addr h.ipv4.dst_addr
-	mov m.k8s_dp_control_acl_dstip_proto_table_ipv4_protocol h.ipv4.protocol
 	table acl_dstip_proto_table
 	mov m.MainControlT_tmp_1 m.local_metadata_acl_status
 	and m.MainControlT_tmp_1 0x1

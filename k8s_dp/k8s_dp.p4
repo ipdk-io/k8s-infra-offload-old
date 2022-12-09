@@ -616,7 +616,7 @@ control k8s_dp_control(
         table acl_dstip_proto_table {
             key = {
                 hdr.ipv4.dst_addr : exact;
-                hdr.ipv4.protocol : exact;
+                hdr.ipv4.protocol : lpm;
             }
             actions = {
                 set_status_lookup_ipset_only;
