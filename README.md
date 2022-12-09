@@ -290,7 +290,7 @@ Kubernetes is known to not work well with Linux swap and hence, it should be tur
   ```
   
 ## IPDK OVS Install
-  This k8s-infra-offload software depends upon the IPDK P4-OVS to be running in the background. Once P4-OVS is running, k8s-infra-offload can load its P4 pipeline and offload various functionalities on it i.e. on P4 data plane. Note that, IPDK P4-OVS needs to installed and run on the host natively. To install P4-OVS and P4-SDE individually (components off the mainline, version later than OVS SHA 6efa9114 & SDE SHA d811fb15), follow the instructions listed below. Note that, P4C is not required as this software includes P4C generated artifacts.
+  This k8s-infra-offload software depends upon the IPDK P4-OVS to be running in the background. Once P4-OVS is running, k8s-infra-offload can load its P4 pipeline and offload various functionalities on it i.e. on P4 data plane. Note that, IPDK P4-OVS needs to installed and run on the host natively. To install P4-OVS and P4-SDE individually (components off the mainline, version later than OVS SHA 6efa9114 & SDE SHA 255ef99f), follow the instructions listed below. Note that, P4C is not required as this software includes P4C generated artifacts.
    
   ### P4-SDE
   To install P4-SDE, follow instructions at https://github.com/p4lang/p4-dpdk-target. User can also refer to the script https://github.com/ipdk-io/ipdk/blob/main/build/networking/scripts/build_p4sde.sh. The main steps can be summerized as:

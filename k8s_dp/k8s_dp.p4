@@ -602,7 +602,7 @@ control k8s_dp_control(
         table acl_srcip_proto_table {
             key = {
                 hdr.ipv4.src_addr : exact;
-                hdr.ipv4.protocol : exact;
+                hdr.ipv4.protocol : lpm;
             }
             actions = {
                 set_status_lookup_ipset_only;
