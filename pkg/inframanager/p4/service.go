@@ -238,7 +238,7 @@ func TxBalanceTcpTable(ctx context.Context, p4RtC *client.Client,
 		nil,
 	)
 	switch action {
-	case Insert, Update:
+	case Insert:
 		if err := p4RtC.InsertTableEntry(ctx, entryTcp); err != nil {
 			log.Errorf("Cannot insert entry into 'tx_balance_tcp table': %v", err)
 			return err
@@ -248,6 +248,8 @@ func TxBalanceTcpTable(ctx context.Context, p4RtC *client.Client,
 			log.Errorf("Cannot delete entry from 'tx_balance_tcp table': %v", err)
 			return err
 		}
+	case Update:
+		return nil
 	default:
 		log.Warnf("Invalid action %v", action)
 		err := fmt.Errorf("Invalid action %v", action)
@@ -279,7 +281,7 @@ func TxBalanceUdpTable(ctx context.Context, p4RtC *client.Client,
 		nil,
 	)
 	switch action {
-	case Insert, Update:
+	case Insert:
 		if err := p4RtC.InsertTableEntry(ctx, entryUdp); err != nil {
 			log.Errorf("Cannot insert entry into 'tx_balance_udp table': %v", err)
 			return err
@@ -289,6 +291,8 @@ func TxBalanceUdpTable(ctx context.Context, p4RtC *client.Client,
 			log.Errorf("Cannot delete entry from 'tx_balance_udp table': %v", err)
 			return err
 		}
+	case Update:
+		return nil
 	default:
 		log.Warnf("Invalid action %v", action)
 		err := fmt.Errorf("Invalid action %v", action)
@@ -535,27 +539,9 @@ func InsertServiceRules(ctx context.Context, p4RtC *client.Client,
 		return
 	}
 
-	if err = TxBalanceTcpTable(ctx, p4RtC, serviceIpAddr, servicePort,
-		groupID, action); err != nil {
-		log.Errorf("Failed to TxBalanceTcpTable")
-		return
-	}
-
 	if err = AsSl3UdpTable(ctx, p4RtC, memberID, modblobPtrDNAT,
 		groupID, action); err != nil {
 		log.Errorf("Failed to AsSl3UdpTable")
-		return
-	}
-
-	if err = TxBalanceUdpTable(ctx, p4RtC, serviceIpAddr, servicePort,
-		groupID, action); err != nil {
-		log.Errorf("Failed to TxBalanceUdpTable")
-		return
-	}
-
-	if err = WriteSourceIpTable(ctx, p4RtC, groupID,
-		serviceIpAddr, servicePort, action); err != nil {
-		log.Errorf("Failed to WriteSourceIpTable")
 		return
 	}
 
@@ -566,6 +552,25 @@ func InsertServiceRules(ctx context.Context, p4RtC *client.Client,
 
 	if err = SetMetaUdpTable(ctx, p4RtC, podIpAddr, portID, groupID, action); err != nil {
 		log.Errorf("Failed to SetMetaUdpTable")
+	}
+
+	if action != Update {
+		if err = TxBalanceTcpTable(ctx, p4RtC, serviceIpAddr, servicePort,
+			groupID, action); err != nil {
+			log.Errorf("Failed to TxBalanceTcpTable")
+			return
+		}
+		if err = TxBalanceUdpTable(ctx, p4RtC, serviceIpAddr, servicePort,
+			groupID, action); err != nil {
+			log.Errorf("Failed to TxBalanceUdpTable")
+			return
+		}
+		if err = WriteSourceIpTable(ctx, p4RtC, groupID,
+			serviceIpAddr, servicePort, action); err != nil {
+			log.Errorf("Failed to WriteSourceIpTable")
+			return
+		}
+
 	}
 
 	return

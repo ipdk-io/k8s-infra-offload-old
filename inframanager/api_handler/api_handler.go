@@ -572,6 +572,8 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 		out.Successful = false
 		return out, err
 	}
+	logger.Infof("Inserted the service entry %s, backends: %v into the pipeline",
+		serviceIpAddr, podIpAddrs)
 
 	if update {
 		/* Update only the endpoint details to the store */
@@ -583,6 +585,8 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 			out.Successful = false
 			return out, err
 		}
+		logger.Infof("Updated the service entry %s, backends: %v in the store",
+			serviceIpAddr, podIpAddrs)
 	} else {
 		if !service.WriteToStore() {
 			logger.Errorf("Failed to insert service entry %s into the store",
@@ -592,9 +596,9 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 			out.Successful = false
 			return out, err
 		}
+		logger.Infof("Inserted the service entry %s, backends: %v into the store",
+			serviceIpAddr, podIpAddrs)
 	}
-	logger.Infof("Inserted the service entry %s into the store",
-		serviceIpAddr)
 
 	return out, err
 }
