@@ -523,8 +523,8 @@ func InsertServiceRules(ctx context.Context, p4RtC *client.Client,
 	log.Infof("group id: %d, service ip: %s, service mac: %s, service port: %d",
 		groupID, serviceIpAddr, serviceMacAddr, servicePort)
 
-	if err = WriteDestIpTable(ctx, p4RtC, podIpAddr, podMacAddr,
-		portID, modblobPtrDNAT, action); err != nil {
+	if err = WriteDestIpTable(ctx, p4RtC, podIpAddr, portID,
+		modblobPtrDNAT, action); err != nil {
 		log.Errorf("Failed to WriteDestIpTable")
 		return
 	}
@@ -554,8 +554,7 @@ func InsertServiceRules(ctx context.Context, p4RtC *client.Client,
 	}
 
 	if err = WriteSourceIpTable(ctx, p4RtC, groupID,
-		serviceIpAddr, serviceMacAddr, servicePort,
-		action); err != nil {
+		serviceIpAddr, servicePort, action); err != nil {
 		log.Errorf("Failed to WriteSourceIpTable")
 		return
 	}
@@ -600,7 +599,7 @@ func DeleteServiceRules(ctx context.Context, p4RtC *client.Client, podIpAddr []s
 			modblobPtrDNAT[i], memberID[i], podIpAddr[i], podMacAddr[i], portID[i])
 	}
 
-	err = WriteDestIpTable(ctx, p4RtC, nil, nil, nil, modblobPtrDNAT, Delete)
+	err = WriteDestIpTable(ctx, p4RtC, nil, nil, modblobPtrDNAT, Delete)
 	if err != nil {
 		return err
 	}
@@ -625,7 +624,7 @@ func DeleteServiceRules(ctx context.Context, p4RtC *client.Client, podIpAddr []s
 		return nil
 	}
 
-	err = WriteSourceIpTable(ctx, p4RtC, groupID, "", "", 0, Delete)
+	err = WriteSourceIpTable(ctx, p4RtC, groupID, "", 0, Delete)
 	if err != nil {
 		return nil
 	}
