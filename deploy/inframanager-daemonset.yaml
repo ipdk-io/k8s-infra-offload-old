@@ -34,14 +34,19 @@ spec:
       containers:
       - name: manager
         image: inframanager:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         volumeMounts:
         - name: log
           mountPath: /var/log
         - name: db
-          mountPath: /opt/inframanager
+          mountPath: /var/lib/cni/inframanager
         command:
         - /inframanager
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
       volumes:
       - name: log
         hostPath:
@@ -49,7 +54,7 @@ spec:
           type: DirectoryOrCreate
       - name: db
         hostPath:
-          path: /opt/inframanager
+          path: /var/lib/cni/inframanager
           type: DirectoryOrCreate
   updateStrategy:
     rollingUpdate:

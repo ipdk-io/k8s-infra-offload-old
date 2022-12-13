@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"net"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -33,6 +32,7 @@ import (
 	conf "github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/config"
 	p4 "github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/p4"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/store"
+	pb "github.com/ipdk-io/k8s-infra-offload/proto"
 
 	p4_v1 "github.com/p4lang/p4runtime/go/p4/v1"
 	log "github.com/sirupsen/logrus"
@@ -50,11 +50,13 @@ func PutConf(c *conf.Configuration) {
 }
 
 type ApiServer struct {
-	listener  net.Listener
-	grpc      *grpc.Server
-	log       *log.Entry
-	p4RtC     *client.Client
-	p4RtCConn *grpc.ClientConn
+	listener   net.Listener
+	grpc       *grpc.Server
+	log        *log.Entry
+	p4RtC      *client.Client
+	p4RtCConn  *grpc.ClientConn
+	gNMICConn  *grpc.ClientConn
+	gNMIClient pb.GNMIClient
 }
 
 var api *ApiServer
@@ -65,6 +67,10 @@ func NewApiServer() *ApiServer {
 		api = &ApiServer{}
 	})
 	return api
+}
+
+func GetLogLevel() string {
+	return config.LogLevel
 }
 
 func OpenP4RtC(ctx context.Context, high uint64, low uint64, stopCh <-chan struct{}) error {
@@ -125,11 +131,79 @@ func OpenP4RtC(ctx context.Context, high uint64, low uint64, stopCh <-chan struc
 	return err
 }
 
-func CloseCon() {
+func CloseP4RtCCon() {
 	server := NewApiServer()
 	if server.p4RtCConn != nil {
 		server.p4RtCConn.Close()
 	}
+}
+
+func OpenGNMICCon() error {
+	var err error
+
+	server := NewApiServer()
+
+	server.gNMICConn, err = grpc.Dial(config.GNMIServer.Addr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Errorf("Cannot connect to gNMI Server: %v", err)
+		return err
+	}
+
+	server.gNMIClient = pb.NewGNMIClient(server.gNMICConn)
+	return nil
+}
+
+func CloseGNMIConn() {
+	server := NewApiServer()
+	if server.gNMICConn != nil {
+		server.gNMICConn.Close()
+	}
+}
+
+func getPortID(ifName string) (portID uint32, err error) {
+	var resp *pb.GetResponse
+
+	if len(ifName) == 0 {
+		err = fmt.Errorf("Empty interface name. Provide a valid input")
+		return
+	}
+
+	req := &pb.GetRequest{
+		Path: []*pb.Path{
+			&pb.Path{
+				Elem: []*pb.PathElem{
+					&pb.PathElem{
+						Name: "interfaces",
+					},
+					&pb.PathElem{
+						Name: "virtual-interface",
+						Key: map[string]string{
+							"name": ifName,
+						},
+					},
+					&pb.PathElem{
+						Name: "config",
+					},
+					&pb.PathElem{
+						Name: "tdi-portin-id",
+					},
+				},
+			},
+		},
+		Type:     pb.GetRequest_ALL,
+		Encoding: pb.Encoding_PROTO,
+	}
+
+	server := NewApiServer()
+	if resp, err = server.gNMIClient.Get(context.Background(),
+		req); err != nil {
+		return
+	}
+
+	val := (resp.Notification[0].Update[0].Val.Value).(*pb.TypedValue_UintVal)
+	portID = (uint32)(val.UintVal)
+	return
 }
 
 func GetFwdPipe(ctx context.Context,
@@ -139,9 +213,9 @@ func GetFwdPipe(ctx context.Context,
 }
 
 func SetFwdPipe(ctx context.Context, binPath string,
-	p4infoPath string, cookie uint64) (*client.FwdPipeConfig, error) {
+	p4InfoPath string, cookie uint64) (*client.FwdPipeConfig, error) {
 	server := NewApiServer()
-	return server.p4RtC.SetFwdPipe(ctx, binPath, p4infoPath, cookie)
+	return server.p4RtC.SetFwdPipe(ctx, binPath, p4InfoPath, cookie)
 }
 
 func CreateServer(log *log.Entry) *ApiServer {
@@ -168,8 +242,28 @@ func CreateServer(log *log.Entry) *ApiServer {
 
 func InsertDefaultRule() {
 	server := NewApiServer()
-	p4.ArptToPortTable(context.Background(), server.p4RtC, types.DefaultRoute,
-		types.ArpProxyDefaultPort, true)
+
+	IP, netIp, err := net.ParseCIDR(types.DefaultRoute)
+	if err != nil {
+		log.Errorf("Failed to get IP from the default route cidr, %s",
+			types.DefaultRoute)
+		return
+	}
+
+	_ = netIp
+
+	ip := IP.String()
+	if len(ip) == 0 {
+		log.Errorf("Empty value: %s, cannot program default gateway",
+			types.DefaultRoute)
+		return
+	}
+
+	log.Infof("Inserting default gateway rule for arp-proxy route")
+	if err := p4.ArptToPortTable(context.Background(), server.p4RtC, ip,
+		types.ArpProxyDefaultPort, true); err != nil {
+		log.Errorf("Failed to insert the default rule for arp-proxy")
+	}
 }
 
 func (s *ApiServer) Start(t *tomb.Tomb) {
@@ -268,17 +362,16 @@ func (s *ApiServer) CreateNetwork(ctx context.Context, in *proto.CreateNetworkRe
 
 	ipAddr := strings.Split(in.AddRequest.ContainerIps[0].Address, "/")[0]
 	macAddr := in.MacAddr
-	//TODO: Extract the portId from mac.
-	// Temporary: Always send to port 0
-	portName := in.HostIfName
-	tmpName := strings.Split(portName, "_")
-	portIDStr := tmpName[1]
-	portID, err := strconv.ParseInt(portIDStr, 10, 32)
+
+	portID, err := getPortID(in.HostIfName)
 	if err != nil {
-		logger.Errorf("Failed to convert port id to int %s", portIDStr)
+		logger.Errorf("Failed to get port id for %s, err: %v",
+			in.HostIfName, err)
 		out.Successful = false
 		return out, err
 	}
+
+	logger.Infof("Interface: %s, port id: %d", in.HostIfName, portID)
 
 	status, err := insertRule(s.log, ctx, server.p4RtC, macAddr,
 		ipAddr, int(portID), p4.ENDPOINT)
@@ -688,21 +781,39 @@ func (s *ApiServer) SetupHostInterface(ctx context.Context, in *proto.SetupHostI
 
 	ipAddr := strings.Split(in.Ipv4Addr, "/")[0]
 	macAddr := in.MacAddr
-	portName := in.IfName
-	tmpName := strings.Split(portName, "_")
-	portIDStr := tmpName[1]
-	portID, err := strconv.ParseInt(portIDStr, 10, 32)
+	portID, err := getPortID(in.IfName)
 	if err != nil {
-		logger.Errorf("Failed to convert port id to int %s", portIDStr)
+		logger.Errorf("Failed to get port id for %s, err: %v",
+			in.IfName, err)
 		out.Successful = false
 		return out, err
 	}
 
-	status, err := insertRule(s.log, ctx, server.p4RtC, macAddr,
-		ipAddr, int(portID), p4.HOST)
-	out.Successful = status
+	logger.Infof("Interface: %s, port id: %d", in.IfName, portID)
 
+	if status, err := insertRule(s.log, ctx, server.p4RtC, macAddr,
+		ipAddr, int(portID), p4.HOST); err != nil {
+		logger.Errorf("Failed to insert rule to the pipeline ip: %s mac: %s port id: %d err: %v",
+			ipAddr, macAddr, portID, err)
+		out.Successful = status
+		return out, err
+	}
 	hostInterfaceMac = macAddr
+
+	if len(config.NodeIP) == 0 {
+		logger.Errorf("No node ip address configured")
+		err = fmt.Errorf("No node ip address configured")
+		out.Successful = false
+		return out, err
+	}
+
+	status, err := insertRule(s.log, ctx, server.p4RtC, hostInterfaceMac,
+		config.NodeIP, int(portID), p4.HOST)
+	if err != nil {
+		logger.Errorf("Failed to insert rule to the pipeline ip: %s mac: %s port id: %d err: %v",
+			config.NodeIP, macAddr, portID, err)
+	}
+	out.Successful = status
 
 	return out, err
 }

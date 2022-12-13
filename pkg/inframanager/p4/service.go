@@ -33,14 +33,8 @@ func WriteDestIpTable(ctx context.Context, p4RtC *client.Client,
 	switch action {
 	case Insert, Update:
 		for i := 0; i < len(modBlobPtrDnat); i++ {
-			dstMac, err := net.ParseMAC(podMacAddr[i])
-			if err != nil {
-				log.Errorf("Invalid mac address: %s, error: %v", podMacAddr[i], err)
-				return err
-			}
-
 			if net.ParseIP(podIpAddr[i]) == nil {
-				err = fmt.Errorf("Invalid IP address: %s", podIpAddr[i])
+				err := fmt.Errorf("Invalid IP address: %s", podIpAddr[i])
 				return err
 			}
 
@@ -51,9 +45,9 @@ func WriteDestIpTable(ctx context.Context, p4RtC *client.Client,
 						Value: valueToBytes(modBlobPtrDnat[i]),
 					},
 				},
-				p4RtC.NewTableActionDirect("k8s_dp_control.update_dst_ip_mac", [][]byte{dstMac,
-					Pack32BinaryIP4(podIpAddr[i]),
-					valueToBytes16(portID[i])}),
+				p4RtC.NewTableActionDirect("k8s_dp_control.update_dst_ip",
+					[][]byte{Pack32BinaryIP4(podIpAddr[i]),
+						valueToBytes16(portID[i])}),
 				nil,
 			)
 			if err := p4RtC.InsertTableEntry(ctx, entryAdd); err != nil {
@@ -317,7 +311,7 @@ func WriteSourceIpTable(ctx context.Context, p4RtC *client.Client,
 		}
 
 		if net.ParseIP(serviceIpAddr) == nil {
-			err = fmt.Errorf("Invalid IP Address: %s", serviceIpAddr)
+			err := fmt.Errorf("Invalid IP Address: %s", serviceIpAddr)
 			return err
 		}
 
@@ -328,12 +322,12 @@ func WriteSourceIpTable(ctx context.Context, p4RtC *client.Client,
 					Value: valueToBytes(ModBlobPtrSnat),
 				},
 			},
-			p4RtC.NewTableActionDirect("k8s_dp_control.update_src_ip_mac", [][]byte{srcMac,
-				Pack32BinaryIP4(serviceIpAddr),
-				valueToBytes16(servicePort)}),
+			p4RtC.NewTableActionDirect("k8s_dp_control.update_src_ip",
+				[][]byte{Pack32BinaryIP4(serviceIpAddr),
+					valueToBytes16(servicePort)}),
 			nil,
 		)
-		if err = p4RtC.InsertTableEntry(ctx, entryAdd); err != nil {
+		if err := p4RtC.InsertTableEntry(ctx, entryAdd); err != nil {
 			log.Errorf("Cannot insert entry into 'write_source_ip_table table': %v", err)
 			return err
 		}

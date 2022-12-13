@@ -23,6 +23,7 @@ import (
 
 	conf "github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/config"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/store"
+	"github.com/ipdk-io/k8s-infra-offload/pkg/utils"
 
 	"github.com/antoninbas/p4runtime-go-client/pkg/client"
 	"github.com/antoninbas/p4runtime-go-client/pkg/signals"
@@ -37,6 +38,12 @@ func main() {
 	if config.P4BinPath == "" || config.P4InfoPath == "" {
 		log.Fatalf("Missing .bin or P4Info")
 	}
+
+	ip, err := utils.GetNodeIPFromEnv()
+	if err != nil {
+		log.Fatalf("Failed to get the node IP address, err: %v", err)
+	}
+	config.NodeIP = ip
 
 	api.PutConf(config)
 
@@ -62,15 +69,22 @@ func main() {
 		log.Errorf("Failed to open p4 runtime client connection")
 		os.Exit(1)
 	}
-	defer api.CloseCon()
+	defer api.CloseP4RtCCon()
+
+	if err := api.OpenGNMICCon(); err != nil {
+		log.Errorf("Failed to open gNMI client connection")
+		os.Exit(1)
+	}
+	defer api.CloseGNMIConn()
 
 	log.Infof("getting pipeline if already set")
 	pipelineConfig, err := api.GetFwdPipe(ctx, client.GetFwdPipeAll)
 	if err == nil {
 		log.Infof("pipeline is already set")
 		if pipelineConfig.P4Info == nil {
-			log.Errorf("p4info is null")
-			api.CloseCon()
+			log.Errorf("p4Info is null")
+			api.CloseP4RtCCon()
+			api.CloseGNMIConn()
 			os.Exit(1)
 		}
 		store.InitEndPointStore(false)
@@ -82,7 +96,8 @@ func main() {
 		if _, err := api.SetFwdPipe(ctx, p4BinPath, p4InfoPath,
 			0); err != nil {
 			log.Errorf("Error when setting forwarding pipe: %v", err)
-			api.CloseCon()
+			api.CloseP4RtCCon()
+			api.CloseGNMIConn()
 			os.Exit(1)
 		}
 		store.InitEndPointStore(true)
@@ -91,7 +106,14 @@ func main() {
 
 	// Starting inframanager gRPC server
 	waitCh := make(chan struct{})
+
+	//Create a new manager object
 	mgr.NewManager()
+
+	/*
+		Start the api server and program the default gateway rule
+		for arp-proxy
+	*/
 	go mgr.Run(stopCh, waitCh)
 
 	// Wait till manager is exited

@@ -14,7 +14,7 @@ tables {
     match_type: EXACT
   }
   action_refs {
-    id: 29330140
+    id: 29740405
   }
   action_refs {
     id: 21257015
@@ -61,24 +61,6 @@ tables {
 }
 tables {
   preamble {
-    id: 40521021
-    name: "k8s_dp_control.mac_to_port_table"
-    alias: "mac_to_port_table"
-  }
-  match_fields {
-    id: 1
-    name: "hdr.ethernet.dst_mac"
-    bitwidth: 48
-    match_type: EXACT
-  }
-  action_refs {
-    id: 24323121
-  }
-  const_default_action_id: 24323121
-  size: 1024
-}
-tables {
-  preamble {
     id: 47856135
     name: "k8s_dp_control.write_dest_ip_table"
     alias: "write_dest_ip_table"
@@ -90,7 +72,7 @@ tables {
     match_type: EXACT
   }
   action_refs {
-    id: 24750436
+    id: 33155327
   }
   action_refs {
     id: 21257015
@@ -317,22 +299,17 @@ actions {
 }
 actions {
   preamble {
-    id: 29330140
-    name: "k8s_dp_control.update_src_ip_mac"
-    alias: "update_src_ip_mac"
+    id: 29740405
+    name: "k8s_dp_control.update_src_ip"
+    alias: "update_src_ip"
   }
   params {
     id: 1
-    name: "new_smac"
-    bitwidth: 48
-  }
-  params {
-    id: 2
     name: "new_ip"
     bitwidth: 32
   }
   params {
-    id: 3
+    id: 2
     name: "new_port"
     bitwidth: 16
   }
@@ -374,22 +351,17 @@ actions {
 }
 actions {
   preamble {
-    id: 24750436
-    name: "k8s_dp_control.update_dst_ip_mac"
-    alias: "update_dst_ip_mac"
+    id: 33155327
+    name: "k8s_dp_control.update_dst_ip"
+    alias: "update_dst_ip"
   }
   params {
     id: 1
-    name: "new_dmac"
-    bitwidth: 48
-  }
-  params {
-    id: 2
     name: "new_ip"
     bitwidth: 32
   }
   params {
-    id: 3
+    id: 2
     name: "new_port"
     bitwidth: 16
   }
