@@ -12,32 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package config
+package utils
 
-// Configurations exported
-type Configuration struct {
-	Server        ServerConf
-	Client        ClientConf
-	GNMIServer    ServerConf
-	HostName      string
-	NodeIP        string
-	LogLevel      string
-	P4ProgConf    string
-	P4InfoPath    string
-	P4BinPath     string
-	DeviceId      uint64
-	EnableService bool
-	EnableRouting bool
-	DefaultDevice int
-	EXAMPLE_PATH  string
-	EXAMPLE_VAR   string
-}
+import (
+	"fmt"
+	"os"
+)
 
-// ServerConfigurations exported
-type ServerConf struct {
-	Addr string
-}
-
-type ClientConf struct {
-	Addr string
+func GetNodeIPFromEnv() (ipAddr string, err error) {
+	ipAddr = os.Getenv("NODE_IP")
+	if len(ipAddr) == 0 {
+		err = fmt.Errorf("NODE_IP env variable is not set")
+	}
+	return ipAddr, err
 }
