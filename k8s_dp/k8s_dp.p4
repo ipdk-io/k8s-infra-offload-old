@@ -294,7 +294,7 @@ control k8s_dp_control(
         InternetChecksum() ck1;
         ExpireTimeProfileId_t new_expire_time_profile_id;
 
-        Counter<PacketCounter_t, FlowIdx_t>(ACL_MAX_COUNTERS, PNA_CounterType_t.PACKETS) P_cntr;
+        Counter<PacketCounter_t, FlowIdx_t>(ACL_MAX_COUNTERS, PNA_CounterType_t.PACKETS) pkt_cntr;
 
 	action update_src_ip(bit<32> new_ip, bit<16> new_port) {
 		ck.clear();
@@ -576,26 +576,26 @@ control k8s_dp_control(
 	}
 	
         action acl_deny() {
-            P_cntr.count(ACL_DENIED);
+            pkt_cntr.count(ACL_DENIED);
             drop_packet();
         }
 
         action set_range_check_ref (AclPolicyId_t pol_id,
                                     RangeCheckRefType_t range_check_ref) {
-            P_cntr.count(ACL_IP_PORT_APPLIED);
+            pkt_cntr.count(ACL_IP_PORT_APPLIED);
             meta.acl_status = LOOKUP_RULES;
             meta.acl_pol_id = pol_id;
             meta.range_check_ref = range_check_ref;
         }
 
         action set_status_lookup_ipset_only (AclPolicyId_t pol_id) {
-            P_cntr.count(ACL_IP_SET_APPLIED);
+            pkt_cntr.count(ACL_IP_SET_APPLIED);
             meta.acl_status = LOOKUP_IPSET;
             meta.acl_pol_id = pol_id;
         }
 
         action set_status_deny_all() {
-            P_cntr.count(ACL_BLOCKED);
+            pkt_cntr.count(ACL_BLOCKED);
             acl_deny();
         }
 
@@ -884,7 +884,7 @@ control k8s_dp_control(
                         * any matching IPset */
                         if ((meta.ipset_check_result & meta.range_check_result) == 0)
                         {
-                            P_cntr.count(ACL_EG_IP_PORT_MISMATCH);
+                            pkt_cntr.count(ACL_EG_IP_PORT_MISMATCH);
                             acl_deny();
                         }
                     }
@@ -1028,7 +1028,7 @@ control k8s_dp_control(
                         * any matching IPset */
                         if ((meta.ipset_check_result & meta.range_check_result) == 0)
                         {
-                            P_cntr.count(ACL_ING_IP_PORT_MISMATCH);
+                            pkt_cntr.count(ACL_ING_IP_PORT_MISMATCH);
                             acl_deny();
                         }
                     }
