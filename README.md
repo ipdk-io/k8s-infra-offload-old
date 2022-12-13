@@ -386,7 +386,7 @@ Kubernetes is known to not work well with Linux swap and hence, it should be tur
   ip netns exec arpns ip link set P4TAP_0 up
   ip netns exec arpns ip addr add 169.254.1.1/32 dev P4TAP_0
   ip netns exec arpns ip route add default dev P4TAP_0 scope link
-  ip netns exec arpns ARP_PROXY_IF=P4TAP_0 ./bin/arp_proxy &
+  ip netns exec arpns bash -c "ARP_PROXY_IF=P4TAP_0 ./bin/arp_proxy &"
   ```
 
   Start the containerd services
