@@ -1,5 +1,5 @@
 
-k8s_dpìî{
+k8s_dpïî{
   "schema_version" : "1.0.0",
   "tables" : [
     {
@@ -2362,8 +2362,8 @@
       "attributes" : []
     },
     {
-      "name" : "pipe.k8s_dp_control.P_cntr",
-      "id" : 315535933,
+      "name" : "pipe.k8s_dp_control.pkt_cntr",
+      "id" : 317030940,
       "table_type" : "Counter",
       "size" : 1024,
       "annotations" : [],
@@ -2630,10 +2630,10 @@
     }
   ],
   "learn_filters" : []
-}‰Ó
-pipeôï{
+}êÔ
+pipeùï{
   "program_name" : "k8s_dp",
-  "build_date" : "Fri Dec  9 06:53:28 2022",
+  "build_date" : "Tue Dec 13 02:52:01 2022",
   "compile_command" : "p4c-dpdk --arch pna -o ./pipe/k8s_dp.spec --p4runtime-files ./p4Info.txt --bf-rt-schema ./bfrt.json --context ./pipe/context.json ./k8s_dp.p4",
   "compiler_version" : "0.1 (SHA: 8313984e7 BUILD: RELEASE)",
   "schema_version" : "0.1",
@@ -5481,15 +5481,15 @@
   ],
   "externs" : [
     {
-      "name" : "k8s_dp_control.P_cntr",
-      "target_name" : "P_cntr_0",
+      "name" : "k8s_dp_control.pkt_cntr",
+      "target_name" : "pkt_cntr_0",
       "type" : "Counter",
       "attributes" : {
         "type" : "packets"
       }
     }
   ]
-}∑Ÿ
+}ﬂŸ
 
 
 
@@ -5980,7 +5980,7 @@ struct main_metadata_t {
 }
 metadata instanceof main_metadata_t
 
-regarray P_cntr_0 size 0x400 initval 0x0
+regarray pkt_cntr_0 size 0x400 initval 0x0
 
 regarray direction size 0x100 initval 0
 
@@ -6155,49 +6155,49 @@ action set_key_for_reverse_ct_1 args instanceof set_key_for_reverse_ct_1_arg_t {
 }
 
 action acl_deny args none {
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action acl_deny_1 args none {
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action acl_deny_2 args none {
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action acl_deny_3 args none {
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action acl_deny_4 args none {
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action acl_deny_5 args none {
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action acl_deny_6 args none {
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action set_range_check_ref args instanceof set_range_check_ref_arg_t {
-	regadd P_cntr_0 0x14 1
+	regadd pkt_cntr_0 0x14 1
 	mov m.local_metadata_acl_status 0x3
 	mov m.local_metadata_acl_pol_id t.pol_id
 	mov m.local_metadata_range_check_ref t.range_check_ref
@@ -6205,7 +6205,7 @@ action set_range_check_ref args instanceof set_range_check_ref_arg_t {
 }
 
 action set_range_check_ref_1 args instanceof set_range_check_ref_1_arg_t {
-	regadd P_cntr_0 0x14 1
+	regadd pkt_cntr_0 0x14 1
 	mov m.local_metadata_acl_status 0x3
 	mov m.local_metadata_acl_pol_id t.pol_id
 	mov m.local_metadata_range_check_ref t.range_check_ref
@@ -6213,29 +6213,29 @@ action set_range_check_ref_1 args instanceof set_range_check_ref_1_arg_t {
 }
 
 action set_status_lookup_ipset_only args instanceof set_status_lookup_ipset_only_arg_t {
-	regadd P_cntr_0 0xA 1
+	regadd pkt_cntr_0 0xA 1
 	mov m.local_metadata_acl_status 0x1
 	mov m.local_metadata_acl_pol_id t.pol_id
 	return
 }
 
 action set_status_lookup_ipset_only_1 args instanceof set_status_lookup_ipset_only_1_arg_t {
-	regadd P_cntr_0 0xA 1
+	regadd pkt_cntr_0 0xA 1
 	mov m.local_metadata_acl_status 0x1
 	mov m.local_metadata_acl_pol_id t.pol_id
 	return
 }
 
 action set_status_deny_all args none {
-	regadd P_cntr_0 0x50 1
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x50 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
 
 action set_status_deny_all_1 args none {
-	regadd P_cntr_0 0x50 1
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x50 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	return
 }
@@ -7198,8 +7198,8 @@ apply {
 	LABEL_ENDSWITCH :	mov m.MainControlT_tmp_0 m.local_metadata_ipset_check_result
 	and m.MainControlT_tmp_0 m.local_metadata_range_check_result
 	jmpneq LABEL_END_0 m.MainControlT_tmp_0 0x0
-	regadd P_cntr_0 0x5C 1
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5C 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	LABEL_END_0 :	recircid m.pna_main_input_metadata_pass
 	jmpneq LABEL_END_9 m.pna_main_input_metadata_pass 0x0
@@ -7371,8 +7371,8 @@ apply {
 	LABEL_ENDSWITCH_1 :	mov m.MainControlT_tmp_2 m.local_metadata_ipset_check_result
 	and m.MainControlT_tmp_2 m.local_metadata_range_check_result
 	jmpneq LABEL_END_25 m.MainControlT_tmp_2 0x0
-	regadd P_cntr_0 0x5B 1
-	regadd P_cntr_0 0x5A 1
+	regadd pkt_cntr_0 0x5B 1
+	regadd pkt_cntr_0 0x5A 1
 	drop
 	LABEL_END_25 :	jmpnv LABEL_FALSE_34 h.arp
 	table arpt_to_port_table

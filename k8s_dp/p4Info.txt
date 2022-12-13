@@ -1165,9 +1165,9 @@ action_profiles {
 }
 counters {
   preamble {
-    id: 315535933
-    name: "k8s_dp_control.P_cntr"
-    alias: "P_cntr"
+    id: 317030940
+    name: "k8s_dp_control.pkt_cntr"
+    alias: "pkt_cntr"
   }
   spec {
     unit: PACKETS
