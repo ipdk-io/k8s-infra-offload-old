@@ -533,44 +533,49 @@ func InsertServiceRules(ctx context.Context, p4RtC *client.Client,
 		return
 	}
 
-	if err = AsSl3TcpTable(ctx, p4RtC, memberID, modblobPtrDNAT,
-		groupID, action); err != nil {
-		log.Errorf("Failed to AsSl3TcpTable")
-		return
+	if service.ClusterProto == "TCP" {
+		if err = AsSl3TcpTable(ctx, p4RtC, memberID, modblobPtrDNAT,
+			groupID, action); err != nil {
+			log.Errorf("Failed to AsSl3TcpTable")
+			return
+		}
+		if err = SetMetaTcpTable(ctx, p4RtC, podIpAddr, portID, groupID, action); err != nil {
+			log.Errorf("Failed to SetMetaTcpTable")
+			return
+		}
+		if action != Update {
+			if err = TxBalanceTcpTable(ctx, p4RtC, serviceIpAddr, servicePort,
+				groupID, action); err != nil {
+				log.Errorf("Failed to TxBalanceTcpTable")
+				return
+			}
+		}
 	}
 
-	if err = AsSl3UdpTable(ctx, p4RtC, memberID, modblobPtrDNAT,
-		groupID, action); err != nil {
-		log.Errorf("Failed to AsSl3UdpTable")
-		return
-	}
-
-	if err = SetMetaTcpTable(ctx, p4RtC, podIpAddr, portID, groupID, action); err != nil {
-		log.Errorf("Failed to SetMetaTcpTable")
-		return
-	}
-
-	if err = SetMetaUdpTable(ctx, p4RtC, podIpAddr, portID, groupID, action); err != nil {
-		log.Errorf("Failed to SetMetaUdpTable")
+	if service.ClusterProto == "UDP" {
+		if err = AsSl3UdpTable(ctx, p4RtC, memberID, modblobPtrDNAT,
+			groupID, action); err != nil {
+			log.Errorf("Failed to AsSl3UdpTable")
+			return
+		}
+		if err = SetMetaUdpTable(ctx, p4RtC, podIpAddr, portID, groupID, action); err != nil {
+			log.Errorf("Failed to SetMetaUdpTable")
+		}
+		if action != Update {
+			if err = TxBalanceUdpTable(ctx, p4RtC, serviceIpAddr, servicePort,
+				groupID, action); err != nil {
+				log.Errorf("Failed to TxBalanceUdpTable")
+				return
+			}
+		}
 	}
 
 	if action != Update {
-		if err = TxBalanceTcpTable(ctx, p4RtC, serviceIpAddr, servicePort,
-			groupID, action); err != nil {
-			log.Errorf("Failed to TxBalanceTcpTable")
-			return
-		}
-		if err = TxBalanceUdpTable(ctx, p4RtC, serviceIpAddr, servicePort,
-			groupID, action); err != nil {
-			log.Errorf("Failed to TxBalanceUdpTable")
-			return
-		}
 		if err = WriteSourceIpTable(ctx, p4RtC, groupID,
 			serviceIpAddr, servicePort, action); err != nil {
 			log.Errorf("Failed to WriteSourceIpTable")
 			return
 		}
-
 	}
 
 	return

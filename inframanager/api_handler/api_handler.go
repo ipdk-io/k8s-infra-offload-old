@@ -30,7 +30,7 @@ import (
 
 	"github.com/antoninbas/p4runtime-go-client/pkg/client"
 	conf "github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/config"
-	p4 "github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/p4"
+	"github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/p4"
 	"github.com/ipdk-io/k8s-infra-offload/pkg/inframanager/store"
 	pb "github.com/ipdk-io/k8s-infra-offload/proto"
 
@@ -475,7 +475,9 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 	servicePort := uint16(in.Endpoint.Port)
 
 	service := store.Service{
-		ClusterIp: serviceIpAddr,
+		ClusterIp:    serviceIpAddr,
+		ClusterPort:  in.Endpoint.Port,
+		ClusterProto: in.Proto,
 	}
 
 	entry := service.GetFromStore()
@@ -512,12 +514,8 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 		logger.Infof("Service ip %v and port %v proto %v", in.Endpoint.Ipv4Addr, in.Endpoint.Port, in.Proto)
 		logger.Infof("Endpoints num %v", len(in.Backends))
 
-		service = store.Service{
-			ClusterIp:       serviceIpAddr,
-			ClusterPort:     uint32(servicePort),
-			NumEndPoints:    0,
-			ServiceEndPoint: make(map[string]store.ServiceEndPoint),
-		}
+		service.NumEndPoints = 0
+		service.ServiceEndPoint = make(map[string]store.ServiceEndPoint)
 	}
 
 	server := NewApiServer()
