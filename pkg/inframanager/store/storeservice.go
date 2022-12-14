@@ -76,15 +76,44 @@ func InitServiceStore(setFwdPipe bool) bool {
 	return true
 }
 
+func properKey(s Service) bool {
+	if len(s.ClusterIp) == 0 {
+		return false
+	}
+	if len(s.ClusterProto) == 0 {
+		return false
+	}
+	if s.ClusterPort < 0 {
+		return false
+	}
+	return true
+}
+
+func getKey(s Service) (key string, ok bool) {
+	if !properKey(s) {
+		return "", false
+	}
+
+	key = s.ClusterIp + ":" + s.ClusterProto + ":" + fmt.Sprint(s.ClusterPort)
+
+	return key, true
+}
+
 func (s Service) WriteToStore() bool {
 	if net.ParseIP(s.ClusterIp) == nil {
 		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
 		return false
 	}
+
+	key, ok := getKey(s)
+	if !ok {
+		return false
+	}
+
 	//aquire lock before adding entry into the map
 	ServiceSet.ServiceLock.Lock()
 	//append tmp entry to the map
-	ServiceSet.ServiceMap[s.ClusterIp] = s
+	ServiceSet.ServiceMap[key] = s
 	//release lock after updating the map
 	ServiceSet.ServiceLock.Unlock()
 	return true
@@ -96,16 +125,16 @@ func (s Service) DeleteFromStore() bool {
 		return false
 	}
 
-	res := ServiceSet.ServiceMap[s.ClusterIp]
-	if reflect.DeepEqual(res, Service{}) {
-		log.Errorf("corresponding service entry is not found in the store for %s", s.ClusterIp)
+	key, ok := getKey(s)
+	if !ok {
 		return false
 	}
 
 	//aquire lock before adding entry into the map
 	ServiceSet.ServiceLock.Lock()
 	//delete tmp entry from the map
-	delete(ServiceSet.ServiceMap, s.ClusterIp)
+	delete(ServiceSet.ServiceMap, key)
+
 	//release lock after updating the map
 	ServiceSet.ServiceLock.Unlock()
 	return true
@@ -114,10 +143,13 @@ func (s Service) DeleteFromStore() bool {
 func (s Service) GetFromStore() store {
 	if net.ParseIP(s.ClusterIp) == nil {
 		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
+
+	key, ok := getKey(s)
+	if !ok {
 		return nil
 	}
 
-	res := ServiceSet.ServiceMap[s.ClusterIp]
+	res := ServiceSet.ServiceMap[key]
 	if reflect.DeepEqual(res, Service{}) {
 		return nil
 	} else {
@@ -126,8 +158,19 @@ func (s Service) GetFromStore() store {
 }
 
 func (s Service) UpdateToStore() bool {
-	fmt.Println("not implemented")
-	return true
+	storeEntry := s.GetFromStore()
+	if storeEntry == nil {
+		return false
+	}
+
+	sEntry := storeEntry.(Service)
+
+	for ipAddr, serviceEp := range s.ServiceEndPoint {
+		if _, exists := sEntry.ServiceEndPoint[ipAddr]; !exists {
+			sEntry.ServiceEndPoint[ipAddr] = serviceEp
+		}
+	}
+	return sEntry.WriteToStore()
 }
 
 func RunSyncServiceInfo() bool {

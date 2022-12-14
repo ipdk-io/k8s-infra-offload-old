@@ -45,9 +45,11 @@ type EndPointCollection struct {
 
 type Service struct {
 	ClusterIp       string
+	ClusterProto    string
 	ClusterPort     uint32
 	GroupID         uint32
 	ServiceEndPoint map[string]ServiceEndPoint
+	NumEndPoints    uint32
 }
 
 type ServiceEndPoint struct {
