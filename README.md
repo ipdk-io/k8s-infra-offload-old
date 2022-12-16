@@ -290,35 +290,33 @@ Kubernetes is known to not work well with Linux swap and hence, it should be tur
   ```
   
 ## IPDK OVS Install
-  This kubernetes depends upon the IPDK P4-OVS to be running in the background. Once P4-OVS is running, kubernetes can load its P4 pipeline and offload various functionalities on it i.e. on P4 data plane. Note that, IPDK P4-OVS needs to installed and run on the host natively. To install P4-OVS and P4-SDE (components as per IPDK 22.07 release) individually, follow the instructions listed below. Note that, P4C is not required as this software includes P4C generated artifacts.
+  This k8s-infra-offload software depends upon the IPDK P4-OVS to be running in the background. Once P4-OVS is running, k8s-infra-offload can load its P4 pipeline and offload various functionalities on it i.e. on P4 data plane. Note that, IPDK P4-OVS needs to installed and run on the host natively. To install P4-OVS and P4-SDE individually (components off the mainline, version later than OVS SHA 6efa9114 & SDE SHA 255ef99f), follow the instructions listed below. Note that, P4C is not required as this software includes P4C generated artifacts.
    
   ### P4-SDE
-  To install P4-SDE, follow instructions at https://github.com/p4lang/p4-dpdk-target. Make sure to checkout using tag v22.07 (for 22.07 release) and build for TDI. User can also refer to the script https://github.com/ipdk-io/ipdk/blob/main/build/networking/scripts/build_p4sde.sh. The main steps can be summerized as:
+  To install P4-SDE, follow instructions at https://github.com/p4lang/p4-dpdk-target. User can also refer to the script https://github.com/ipdk-io/ipdk/blob/main/build/networking/scripts/build_p4sde.sh. The main steps can be summerized as:
   ```bash
   git clone https://github.com/p4lang/p4-dpdk-target
   cd p4-dpdk-target
-  git checkout v22.07
   git submodule update --init --recursive
   mkdir ./install
   pushd ./tools/setup
   source p4sde_env_setup.sh <path to p4-dpdk-target>
   popd
   ./autogen.sh
-  ./configure --prefix=$SDE_INSTALL --with-generic-flags=yes
+  ./configure --prefix=$SDE_INSTALL
   make -j
   make install
   ```
   
   ### P4-OVS
-  To install P4-OVS, follow instructions as per the script https://github.com/ipdk-io/ipdk/blob/main/build/networking/scripts/get_p4ovs_repo.sh to download the code. Note that, the P4-OVS code is checked out using tag v22.07 (for 22.07 release). In addition, set the OVS_INSTALL env variable to point to this P4-OVS base directory. The main steps can be summarized as:
+  To install P4-OVS, follow instructions as per the script https://github.com/ipdk-io/ipdk/blob/main/build/networking/scripts/get_p4ovs_repo.sh to download the code. Set the OVS_INSTALL env variable to point to this P4-OVS base directory. The main steps can be summarized as (going by the recommended custom installation):
   ```bash
-  git clone https://github.com/ipdk-io/ovs.git -b ovs-with-p4 P4-OVS
-  cd P4-OVS
-  git checkout v22.07
+  git clone https://github.com/ipdk-io/ovs.git
+  cd ovs
   git submodule update --init --recursive
-  ./install_dep_packages.sh $PWD
-  source p4ovs_env_setup.sh $SDE_INSTALL
-  ./build-p4ovs.sh $SDE_INSTALL
+  ./install_dep_packages.sh $PWD $PWD
+  source p4ovs_env_setup.sh $SDE_INSTALL $PWD/P4OVS_DEPS_INSTALL
+  ./build-p4ovs.sh $SDE_INSTALL $PWD/P4OVS_DEPS_INSTALL
   export OVS_INSTALL=$PWD
   ```
 
@@ -371,7 +369,7 @@ Kubernetes is known to not work well with Linux swap and hence, it should be tur
 ## P4-K8s Deployment
   Run create_interfaces.sh script which, in addition to creating specified number of TAP interfaces, sets up the huge pages and starts P4-OVS.
   ```bash
-  # ./p4-k8s/scripts/create_interfaces.sh <8/16/32/...> [OVS_DEP_INSTALL_PATH]
+  # ./p4-k8s/scripts/create_interfaces.sh <8/16/32/...> $P4OVS_DEPS_INSTALL
   ```
     
   After running the above script, verify that P4-OVS is running in the background.
@@ -381,12 +379,14 @@ Kubernetes is known to not work well with Linux swap and hence, it should be tur
   root       25054       1 99 07:15 ?        00:09:03 ovs-vswitchd --pidfile --detach --no-chdir --mlockall --log-file=/tmp/logs/ovs-vswitchd.log
   ```
 
-  Rename first TAP interface and run ARP-Proxy on it.
+  Move first TAP interface into separate namespace and then run ARP-Proxy on it.
   ```bash
-  ip link set P4TAP_0 name TAP_0
-  ip link set TAP_0 up
-  ip addr add 169.254.1.1/32 dev TAP_0
-  ARP_PROXY_IF=TAP_0 ./bin/arp_proxy &
+  ip netns add arpns
+  ip link set P4TAP_0 netns arpns
+  ip netns exec arpns ip link set P4TAP_0 up
+  ip netns exec arpns ip addr add 169.254.1.1/32 dev P4TAP_0
+  ip netns exec arpns ip route add default dev P4TAP_0 scope link
+  ip netns exec arpns bash -c "ARP_PROXY_IF=P4TAP_0 ./bin/arp_proxy &"
   ```
 
   Start the containerd services
@@ -458,6 +458,11 @@ Kubernetes is known to not work well with Linux swap and hence, it should be tur
   64 bytes from 10.244.0.6: seq=3 ttl=64 time=0.112 ms
   ...
   ```
+ 
+  To delete above created test pods
+  ```bash
+  # kubectl delete pod test-pod test-pod2
+  ```
 
 ### Service deployment Test
   To test simple service deployment, user can use iperf based server available in https://github.com/Pharb/kubernetes-iperf3.git repository. Clone this repository and deploy the service as below:
@@ -475,6 +480,11 @@ Kubernetes is known to not work well with Linux swap and hence, it should be tur
   iperf3-server-deployment-59bf4754f9-4hp4c   1/1     Running   0          18m   10.244.0.8   ins21   <none>           <none>
   test-pod                                    1/1     Running   0          25m   10.244.0.6   ins21   <none>           <none>
   test-pod2                                   1/1     Running   0          25m   10.244.0.7   ins21   <none>           <none>  
+  ```
+
+  To clean up above created services
+  ```bash
+  # ./steps/cleanup.sh
   ```
 
 ## Cleanup All  
