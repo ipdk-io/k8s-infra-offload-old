@@ -120,7 +120,7 @@ func AsSl3TcpTable(ctx context.Context, p4RtC *client.Client,
 		"k8s_dp_control.as_sl3_tcp",
 		groupID,
 		memberList,
-		int32(40),
+		int32(128),
 	)
 
 	switch action {
@@ -188,7 +188,7 @@ func AsSl3UdpTable(ctx context.Context, p4RtC *client.Client,
 		"k8s_dp_control.as_sl3_udp",
 		groupID,
 		memberList,
-		int32(40),
+		int32(128),
 	)
 	switch action {
 	case Insert:
