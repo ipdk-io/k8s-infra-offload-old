@@ -153,7 +153,7 @@ func (s Service) DeleteFromStore() bool {
 func (s Service) GetFromStore() store {
 	if net.ParseIP(s.ClusterIp) == nil {
 		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
-
+	}
 	key, ok := getKey(s)
 	if !ok {
 		return nil
