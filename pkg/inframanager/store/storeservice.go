@@ -110,6 +110,11 @@ func (s Service) WriteToStore() bool {
 		return false
 	}
 
+	if net.ParseIP(s.ClusterIp) == nil {
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
+		return false
+	}
+
 	//aquire lock before adding entry into the map
 	ServiceSet.ServiceLock.Lock()
 	//append tmp entry to the map
@@ -130,6 +135,11 @@ func (s Service) DeleteFromStore() bool {
 		return false
 	}
 
+	if net.ParseIP(s.ClusterIp) == nil {
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
+		return false
+	}
+
 	//aquire lock before adding entry into the map
 	ServiceSet.ServiceLock.Lock()
 	//delete tmp entry from the map
@@ -146,6 +156,11 @@ func (s Service) GetFromStore() store {
 
 	key, ok := getKey(s)
 	if !ok {
+		return nil
+	}
+
+	if net.ParseIP(s.ClusterIp) == nil {
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
 		return nil
 	}
 

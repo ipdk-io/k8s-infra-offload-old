@@ -361,7 +361,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_valid := store.Service{
 					ClusterIp:       "10.100.0.1",
-					ClusterPort:     10000,
+					Port:            10000,
+					Proto:           "TCP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -426,7 +427,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_valid := store.Service{
 					ClusterIp:       "10.100.0.1",
-					ClusterPort:     10000,
+					Port:            10000,
+					Proto:           "TCP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -452,6 +454,30 @@ var _ = Describe("Storeservice", func() {
 				store.NewService()
 			})
 
+			It("returns false if getkey fails", func() {
+				ep1 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.1",
+					Port:      8081,
+					MemberID:  1,
+				}
+				ep2 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.2",
+					Port:      8082,
+					MemberID:  2,
+				}
+				data_invalidkey := store.Service{
+					ClusterIp:       "10.100.0.4",
+					Port:            70000,
+					Proto:           "TCP",
+					GroupID:         1,
+					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
+				}
+				data_invalidkey.ServiceEndPoint["10.10.10.1"] = ep1
+				data_invalidkey.ServiceEndPoint["10.10.10.2"] = ep2
+				ret := data_invalidkey.WriteToStore()
+				Expect(ret).To(Equal(false))
+			})
+
 			It("writes data to the store and returns true when input is valid", func() {
 				ep1 := store.ServiceEndPoint{
 					IpAddress: "10.10.10.1",
@@ -465,7 +491,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_valid := store.Service{
 					ClusterIp:       "10.100.0.4",
-					ClusterPort:     10004,
+					Port:            10004,
+					Proto:           "TCP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -488,7 +515,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_invalid := store.Service{
 					ClusterIp:       "a.b.c.d",
-					ClusterPort:     10000,
+					Port:            10000,
+					Proto:           "UDP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -510,7 +538,32 @@ var _ = Describe("Storeservice", func() {
 				store.NewService()
 			})
 
-			It("deletes data from the store and retursn true when input is valid and is present in the store", func() {
+			It("returns false if getkey fails", func() {
+				ep1 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.1",
+					Port:      8081,
+					MemberID:  1,
+				}
+				ep2 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.2",
+					Port:      8082,
+					MemberID:  2,
+				}
+				data_invalidkey := store.Service{
+					ClusterIp:       "10.100.0.4",
+					Port:            70000,
+					Proto:           "TCP",
+					GroupID:         1,
+					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
+				}
+				data_invalidkey.ServiceEndPoint["10.10.10.1"] = ep1
+				data_invalidkey.ServiceEndPoint["10.10.10.2"] = ep2
+				data_invalidkey.WriteToStore()
+				ret := data_invalidkey.DeleteFromStore()
+				Expect(ret).To(Equal(false))
+			})
+
+			It("deletes data from the store and returns true when input is valid and is present in the store", func() {
 				ep1 := store.ServiceEndPoint{
 					IpAddress: "10.10.10.1",
 					Port:      8081,
@@ -523,7 +576,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_valid := store.Service{
 					ClusterIp:       "10.100.0.1",
-					ClusterPort:     10000,
+					Port:            10000,
+					Proto:           "TCP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -532,29 +586,6 @@ var _ = Describe("Storeservice", func() {
 				data_valid.WriteToStore()
 				ret := data_valid.DeleteFromStore()
 				Expect(ret).To(Equal(true))
-			})
-
-			It("returns false when input is valid but not present in the store", func() {
-				ep1 := store.ServiceEndPoint{
-					IpAddress: "10.10.10.1",
-					Port:      8081,
-					MemberID:  1,
-				}
-				ep2 := store.ServiceEndPoint{
-					IpAddress: "10.10.10.2",
-					Port:      8082,
-					MemberID:  2,
-				}
-				data_valid := store.Service{
-					ClusterIp:       "10.100.0.3",
-					ClusterPort:     10003,
-					GroupID:         3,
-					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
-				}
-				data_valid.ServiceEndPoint["10.10.10.1"] = ep1
-				data_valid.ServiceEndPoint["10.10.10.2"] = ep2
-				ret := data_valid.DeleteFromStore()
-				Expect(ret).To(Equal(false))
 			})
 
 			It("returns false when input is invalid", func() {
@@ -570,7 +601,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_invalid := store.Service{
 					ClusterIp:       "a.100.0.b",
-					ClusterPort:     10003,
+					Port:            10003,
+					Proto:           "TCP",
 					GroupID:         3,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -605,7 +637,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_valid := store.Service{
 					ClusterIp:       "10.100.0.1",
-					ClusterPort:     10000,
+					Port:            10000,
+					Proto:           "TCP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -629,7 +662,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_valid := store.Service{
 					ClusterIp:       "10.100.0.3",
-					ClusterPort:     10003,
+					Port:            10003,
+					Proto:           "TCP",
 					GroupID:         3,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -656,7 +690,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_invalid := store.Service{
 					ClusterIp:       "a.100.0.b",
-					ClusterPort:     10000,
+					Port:            10000,
+					Proto:           "TCP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
@@ -664,6 +699,72 @@ var _ = Describe("Storeservice", func() {
 				data_invalid.ServiceEndPoint["10.10.10.2"] = ep2
 				ret := data_invalid.GetFromStore()
 				Expect(ret).Should(BeNil())
+			})
+
+		})
+
+	})
+
+	Describe("UpdateToStore", func() {
+
+		Context("updates data to the store", func() {
+
+			BeforeEach(func() {
+				store.NewService()
+			})
+
+			It("returns false if get from store fails", func() {
+				ep1 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.1",
+					Port:      8081,
+					MemberID:  1,
+				}
+				ep2 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.2",
+					Port:      8082,
+					MemberID:  2,
+				}
+				data_invalid := store.Service{
+					ClusterIp:       "10.100.0.1",
+					Port:            10000,
+					GroupID:         1,
+					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
+				}
+				data_invalid.ServiceEndPoint["10.10.10.1"] = ep1
+				data_invalid.ServiceEndPoint["10.10.10.2"] = ep2
+				ret := data_invalid.UpdateToStore()
+				Expect(ret).To(Equal(false))
+			})
+
+			It("returns true if data is valid and update to store succeeds", func() {
+				ep1 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.1",
+					Port:      8081,
+					MemberID:  1,
+				}
+				ep2 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.2",
+					Port:      8082,
+					MemberID:  2,
+				}
+				data_valid := store.Service{
+					ClusterIp:       "10.100.0.8",
+					Port:            10000,
+					Proto:           "TCP",
+					GroupID:         1,
+					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
+				}
+				data_valid.ServiceEndPoint["10.10.10.1"] = ep1
+				data_valid.ServiceEndPoint["10.10.10.2"] = ep2
+				data_valid.WriteToStore()
+				ep3 := store.ServiceEndPoint{
+					IpAddress: "10.10.10.3",
+					Port:      8083,
+					MemberID:  3,
+				}
+				data_valid.ServiceEndPoint["10.10.10.3"] = ep3
+				ret := data_valid.UpdateToStore()
+				Expect(ret).To(Equal(true))
 			})
 
 		})
@@ -691,7 +792,8 @@ var _ = Describe("Storeservice", func() {
 				}
 				data_valid := store.Service{
 					ClusterIp:       "10.100.0.1",
-					ClusterPort:     10000,
+					Port:            10000,
+					Proto:           "TCP",
 					GroupID:         1,
 					ServiceEndPoint: make(map[string]store.ServiceEndPoint),
 				}
