@@ -105,13 +105,8 @@ func (s Service) WriteToStore() bool {
 		return false
 	}
 
-	key, ok := getKey(s)
+key, ok := getKey(s)
 	if !ok {
-		return false
-	}
-
-	if net.ParseIP(s.ClusterIp) == nil {
-		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
 		return false
 	}
 
@@ -135,11 +130,6 @@ func (s Service) DeleteFromStore() bool {
 		return false
 	}
 
-	if net.ParseIP(s.ClusterIp) == nil {
-		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
-		return false
-	}
-
 	//aquire lock before adding entry into the map
 	ServiceSet.ServiceLock.Lock()
 	//delete tmp entry from the map
@@ -151,20 +141,17 @@ func (s Service) DeleteFromStore() bool {
 }
 
 func (s Service) GetFromStore() store {
-	if net.ParseIP(s.ClusterIp) == nil {
-		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
-	}
 	key, ok := getKey(s)
 	if !ok {
 		return nil
 	}
 
-	if net.ParseIP(s.ClusterIp) == nil {
+  if net.ParseIP(s.ClusterIp) == nil {
 		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
 		return nil
 	}
 
-	res := ServiceSet.ServiceMap[key]
+  res := ServiceSet.ServiceMap[key]
 	if reflect.DeepEqual(res, Service{}) {
 		return nil
 	} else {
