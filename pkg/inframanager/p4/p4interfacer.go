@@ -2,7 +2,6 @@ package p4
 
 import (
 	"context"
-	"fmt"
 	"github.com/antoninbas/p4runtime-go-client/pkg/client"
 	p4_v1 "github.com/p4lang/p4runtime/go/p4/v1"
 )
