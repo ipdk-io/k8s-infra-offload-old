@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  packages: write
+  Packages: write
 
 jobs:
 
