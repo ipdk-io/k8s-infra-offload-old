@@ -77,13 +77,13 @@ func InitEndPointStore(setFwdPipe bool) bool {
 
 func (ep EndPoint) WriteToStore() bool {
 	if net.ParseIP(ep.PodIpAddress) == nil {
-		log.Errorf("Invalid IP Address %s", ep.PodIpAddress)
+		log.Errorf("Invalid IP Address")
 		return false
 	}
 
 	_, err := net.ParseMAC(ep.PodMacAddress)
 	if err != nil {
-		log.Errorf("Invalid MAC Address %s", ep.PodMacAddress)
+		log.Errorf("Invalid MAC Address")
 		return false
 	}
 	//aquire lock before adding entry into the map
@@ -98,7 +98,7 @@ func (ep EndPoint) WriteToStore() bool {
 
 func (ep EndPoint) DeleteFromStore() bool {
 	if net.ParseIP(ep.PodIpAddress) == nil {
-		log.Errorf("Invalid IP Address %s", ep.PodIpAddress)
+		log.Errorf("Invalid IP Address")
 		return false
 	}
 
@@ -113,7 +113,7 @@ func (ep EndPoint) DeleteFromStore() bool {
 
 func (ep EndPoint) GetFromStore() store {
 	if net.ParseIP(ep.PodIpAddress) == nil {
-		log.Errorf("Invalid IP Address %s", ep.PodIpAddress)
+		log.Errorf("Invalid IP Address")
 		return nil
 	}
 
