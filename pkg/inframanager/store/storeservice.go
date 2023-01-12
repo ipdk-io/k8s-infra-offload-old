@@ -101,7 +101,7 @@ func getKey(s Service) (key string, ok bool) {
 
 func (s Service) WriteToStore() bool {
 	if net.ParseIP(s.ClusterIp) == nil {
-		log.Errorf("Invalid cluster IP")
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
 		return false
 	}
 
@@ -121,7 +121,7 @@ func (s Service) WriteToStore() bool {
 
 func (s Service) DeleteFromStore() bool {
 	if net.ParseIP(s.ClusterIp) == nil {
-		log.Errorf("Invalid cluster IP")
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
 		return false
 	}
 
@@ -142,7 +142,7 @@ func (s Service) DeleteFromStore() bool {
 
 func (s Service) GetFromStore() store {
 	if net.ParseIP(s.ClusterIp) == nil {
-		log.Errorf("Invalid cluster IP")
+		log.Errorf("Invalid cluster IP %s", s.ClusterIp)
 		return nil
 	}
 

@@ -28,7 +28,7 @@ func ArptToPortTable(ctx context.Context, p4RtC *client.Client, arpTpa string, p
 	var err error
 
 	if net.ParseIP(arpTpa) == nil {
-		err = fmt.Errorf("Invalid IP Address")
+		err = fmt.Errorf("Invalid IP Address %s", arpTpa)
 		return err
 	}
 
@@ -44,8 +44,8 @@ func ArptToPortTable(ctx context.Context, p4RtC *client.Client, arpTpa string, p
 			nil,
 		)
 		if err = p4RtC.InsertTableEntry(ctx, entryAdd); err != nil {
-			log.Errorf("Cannot insert entry into arpt_to_port_table table, port: %d, err: %v",
-				port, err)
+			log.Errorf("Cannot insert entry into arpt_to_port_table table, ip:%s, port: %d, err: %v",
+				arpTpa, port, err)
 			return err
 		}
 	} else {
@@ -60,8 +60,8 @@ func ArptToPortTable(ctx context.Context, p4RtC *client.Client, arpTpa string, p
 			nil,
 		)
 		if err = p4RtC.DeleteTableEntry(ctx, entryDelete); err != nil {
-			log.Errorf("Cannot delete entry from arpt_to_port_table table, port: %d, err: %v",
-				port, err)
+			log.Errorf("Cannot delete entry from arpt_to_port_table table, ip:%s, port: %d, err: %v",
+				arpTpa, port, err)
 			return err
 		}
 	}
@@ -73,14 +73,14 @@ func Ipv4ToPortTable(ctx context.Context, p4RtC *client.Client, ipAddr string, m
 	var err error
 
 	if net.ParseIP(ipAddr) == nil {
-		err = fmt.Errorf("Invalid IP Address")
+		err = fmt.Errorf("Invalid IP Address %s", ipAddr)
 		return err
 	}
 
 	if flag == true {
 		dmac, err := net.ParseMAC(macAddr)
 		if err != nil {
-			log.Errorf("Invalid mac address")
+			log.Errorf("Invalid mac address %s", macAddr)
 			return err
 		}
 
