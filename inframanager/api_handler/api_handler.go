@@ -408,7 +408,7 @@ func (s *ApiServer) DeleteNetwork(ctx context.Context, in *proto.DeleteNetworkRe
 
 	if ep.DeleteFromStore() != true {
 		out.Successful = false
-		err = fmt.Errorf("Failed to delete %s %s from the store", macAddr, ipAddr))
+		err = fmt.Errorf("Failed to delete %s %s from the store", macAddr, ipAddr)
 		return out, err
 	}
 	logger.Debugf("Deleted the entries %s %s from the store", macAddr, ipAddr)
