@@ -527,7 +527,7 @@ func (s *ApiServer) NatTranslationAdd(ctx context.Context, in *proto.NatTranslat
 	}
 
 	if newEps == 0 {
-		logger.Infof("No new endpoints in the service. No rules inserted")
+		logger.Info("No new endpoints in the service. No rules inserted")
 		return out, err
 	}
 
